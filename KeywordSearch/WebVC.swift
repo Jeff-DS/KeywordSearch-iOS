@@ -32,11 +32,6 @@ class WebVC: UIViewController, WKScriptMessageHandler {
         let mainBundle = NSBundle.mainBundle()
         let script:String? = mainBundle.pathForResource("DetectSearchFields", ofType: "js")
         
-        // ISSUE ///////
-        // The script variable is a string containing the PATH of the .js file, not the JS code itself.
-        // The "source:" parameter of the WKUserScript method takes a string containing JS code.
-        //////////
-        // Let's try getting the actual string of the text:
         var scriptText:String = ""
         do {
             scriptText = try String(contentsOfFile: script!)
@@ -76,45 +71,12 @@ class WebVC: UIViewController, WKScriptMessageHandler {
         let request = NSURLRequest(URL: URL)
         newSearchView.loadRequest(request)
         
-        // Do the JavaScript thing
-//        webView.evaluateJavaScript("document.getElementsByClassName('foreign')") { (result, error) in
-        webView.evaluateJavaScript("webkit.messageHandlers.SearchField.postMessage({body: 'Yo babe'});") { (result, error) in
-            print("\nThe error is: \n\(error)")
-            print("\nThe result is: \n\(result)")
         }
-        
-        // Try evaluating the script as JavaScript....
-        
-        // This is returning nil and not posting a handler message. I think the problem may be that the page hasn't loaded yet. Looking up how to make this run only after the page has loaded. Some horrible KVO stuff. or navigation delegate?? which is better?
-        
-        // Either FIGURE THIS OUT FROM THE SOURCES or MAKE A STACK OVERFLOW POST
-        
-        /*
-         Option 1: KVO (key-value observing).
-         - Add the VC as an observer of the estimatedProgress keypath on the webView.
-         - Implement observeValueForKeyPath() method. Presumably it would detect when the progress == 1, and then call the method that runs the JavaScript.
-         
-         Option 2: ?
-         - I have injectionTime as 'at document end', which means it should run "when the body of the HTML page has been loaded" (kinderas.com), so why isn't that sufficient?
-        
-        
-        */
-            webView.evaluateJavaScript(scriptText) { (result, error) in
-                print("\n\nSCRIPT THING\n")
-                print("\nThe error is: \n\(error)")
-                print("\nThe result is: \n\(result)")
-
-        }
-        
-    }
     
+    // Print any messages received from JavaScript
     func userContentController(userContentController: WKUserContentController, didReceiveScriptMessage message: WKScriptMessage) {
-
-//        if (message.name == "searchField") {
         
-            print("JavaScript sends the following message: \(message.body)")
-        
-//        }
+        print("JavaScript sends a message.\nMessage name: \(message.name) \nMessage body: \(message.body)\n\n")
         
     }
     

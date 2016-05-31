@@ -162,11 +162,6 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate {
     }
 
     func openWebPage(URLString: String) {
-//        // Create a view controller
-//        let webVC: WebVC = WebVC() // Use a safari view controller instead
-//        webVC.URLString = URLString
-//        // Present it
-//        presentViewController(webVC, animated: true, completion: nil)
         
         let thing = NSURL(string: URLString)
         let safariVC = SFSafariViewController(URL: thing!)
@@ -176,42 +171,3 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate {
         
     }
 }
-
-/*
- Example for JavaScript animation, I modified it from here: http://www.w3schools.com/jquery/tryit.asp?filename=tryjquery_animation1_multicss
- Note: to get CONTINUOUS ANIMATION, you don't use "while (true)" (never do that), but rather recursion. Google 'javascript continuous animation' for examples.
- 
- <!DOCTYPE html>
- <html>
- <head>
- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
- <script>
- $(document).ready(function(){
-    $("button").click(function(){
-        var i = 0
-        while (i < 10) {
-            $("div").animate({
-                opacity: '0.5',
-                });
-            $("div").animate({
-                opacity: '1',
-            });
-        i++;
-        }
-    });
- });
- </script>
- </head>
- <body>
- 
- <button>Start Animation</button>
- 
- <p>By default, all HTML elements have a static position, and cannot be moved. To manipulate the position, remember to first set the CSS position property of the element to relative, fixed, or absolute!</p>
- 
- <div style="background:#98bf21;height:100px;width:100px;position:absolute;"></div>
- 
- </body>
- </html>
-
- 
- */
