@@ -18,17 +18,26 @@ function findSearchFields() {
         
         var field = searchFields[i];
     
-        // TODO: Make the search fields pulsate
+        // TODO: Make the search fields pulsate. Test if Jquery works; if not, do it w/regular JS.
         // For now, just make it blue so we know this is working.
         field.style.backgroundColor = "blue";
 
         // When the search field is selected, send the destination URL back to Swift to be handled
         
-        // Detect when field is selected
+        // Detect when field is clicked.
         field.onclick = function() {
             
             field.style.backgroundColor = "yellow";
             webkit.messageHandlers.SearchField.postMessage("You clicked on a search field");
+            
+            // Put in some random text as the query string
+            field.value = "ads8923jadsnj7y82bhjsdfnjky78";
+            // Hit enter.                                       <-- THIS DOESN'T WORK YET. It seems that simulating 'enter' doesn't actually make the things that happen when Enter is pressed happen. So, try SUBMITTING the form instead.
+            var event = new KeyboardEvent('hitEnter', {
+                                  'key': 'Enter'
+                                  });
+            field.dispatchEvent(event);
+            // Send the destination URL back with messageHandler.
         
         }
 
