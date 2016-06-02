@@ -12,7 +12,7 @@ function findSearchFields() {
     }
     
     // Let the app know how many we found
-    webkit.messageHandlers.SearchField.postMessage("There is/are " + searchFields.length + " search field(s) on this page");
+    sendMessage("There is/are " + searchFields.length + " search field(s) on this page");
 
     for (var i = 0; i < searchFields.length; i++) {
         
@@ -28,16 +28,18 @@ function findSearchFields() {
         field.onclick = function() {
             
             field.style.backgroundColor = "yellow";
-            webkit.messageHandlers.SearchField.postMessage("You clicked on a search field");
+            sendMessage("You clicked on a search field");
             
             // Put in some random text as the query string
             field.value = "ads8923jadsnj7y82bhjsdfnjky78";
-            // Hit enter.                                       <-- THIS DOESN'T WORK YET. It seems that simulating 'enter' doesn't actually make the things that happen when Enter is pressed happen. So, try SUBMITTING the form instead.
-            var event = new KeyboardEvent('hitEnter', {
-                                  'key': 'Enter'
-                                  });
-            field.dispatchEvent(event);
+            
+            // Submit form                  <-- QUESTION: will the <form> always be the grandparent node of the search box? If not, how to reliably submit the form?
+            field.parentNode.parentNode.submit();
+            
             // Send the destination URL back with messageHandler.
+            sendMessage(document.URL);
+            
+            
         
         }
 
@@ -45,6 +47,12 @@ function findSearchFields() {
     
 }
 
+// Post a message back to the app
+function sendMessage(message) {
+    webkit.messageHandlers.SearchField.postMessage(message);
+}
+
+sendMessage(document.URL);
 findSearchFields();
 
 /*

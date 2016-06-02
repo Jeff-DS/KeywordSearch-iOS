@@ -78,6 +78,18 @@ class WebVC: UIViewController, WKScriptMessageHandler {
         
         print("JavaScript sends a message.\nMessage name: \(message.name) \nMessage body: \(message.body)\n\n")
         
+        // If the message contains our dummy string, then add a new search to the list.
+        if message.body is String {
+            let body = message.body as! String
+
+            if body.rangeOfString("ads8923jadsnj7y82bhjsdfnjky78") != nil {
+                // Add a search--need to send this over to ViewController
+                // TEST FOR NOW
+                print("GOT THE URL BACK: \(body)")
+            }
+            
+        }
+        
     }
     
 }
