@@ -90,11 +90,26 @@ class WebVC: UIViewController, WKScriptMessageHandler {
                 // Send this search type over to the View Controller
                 delegate?.addNewSearchType(newSearch)
                 
+                // Confirm the user doesn't want to add any more searches, then close the WebVC and return to the home screen.
+                let alert = UIAlertController(title: "New search \"\(newSearch.name)\" added!",
+                                              message: "Would you like to return to the home screen, or add another search engine?",
+                                              preferredStyle: UIAlertControllerStyle.Alert)
+                let goHomeAction = UIAlertAction(title: "Home",
+                                                 style: .Default,
+                                                 handler: {(alert: UIAlertAction!) in self.dismissViewControllerAnimated(true, completion: nil)})
+                alert.addAction(goHomeAction)
+                let keepAddingAction = UIAlertAction(title: "Add more", style: .Default, handler: nil)
+                alert.addAction(keepAddingAction)
+                presentViewController(alert, animated: true, completion: nil)
+
+
+                
             }
 
             print("JavaScript sends a message.\nMessage name: \(message.name) \nMessage body: \(message.body)\n\n")
             
         }
+        
         
     }
     
