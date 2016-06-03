@@ -92,7 +92,7 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate, WebVCDel
     func performSearch(sender: UIButton) {
      
         let searchType = buttonDictionary[sender]
-        let searchTerm = searchField.text
+        let searchTerm = searchField.text?.stringByAddingPercentEncodingWithAllowedCharacters(.URLQueryAllowedCharacterSet())
         let finalURL = searchType!.URLPartOne + searchTerm! + searchType!.URLPartTwo
         openWebPage(finalURL)
         
@@ -153,7 +153,7 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate, WebVCDel
  - Then click/tap.
  
  FEATURES TO DO
- - FIX THE SPACE THING: see http://www.w3schools.com/tags/ref_urlencode.asp (right now, app crashes if search term contains space.)
+ - FIX THE SPACE THING: see http://www.w3schools.com/tags/ref_urlencode.asp (right now, app crashes if search term contains space.) Do this in JS script or in Swift in WebVC? See this: http://stackoverflow.com/questions/24551816/swift-encode-url/24552028#24552028
  - Like Chrome, show a URL on the clipboard, if any
  - Allow searching multiple sites at once in tabs. E.g., search a bunch of dictionaries for the same word, or a bunch of e-commerce sites for the same product.
  - Could add option to get results from an API rather than web search?
