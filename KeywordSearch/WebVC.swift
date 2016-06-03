@@ -9,24 +9,19 @@
 import UIKit
 import WebKit
 
+protocol WebVCDelegate: class {
+    func addNewSearchType(searchType: SearchType)
+}
+
 class WebVC: UIViewController, WKScriptMessageHandler {
     
     var URLString = ""
     var webView = WKWebView()
+    weak var delegate: WebVCDelegate?
     
     override func viewDidLoad() {
         
         super.viewDidLoad()
-        
-        /*
-         Summary of how to run a JavaScript script on a web page
-         Create each of these:
-         1. A WKUserScript, which contains the JavaScript code.
-         2. A userContentController. (Add the user script to this)
-         3. A WKWebViewConfiguration. (The contentController is a property of this.)
-         4. A WKWebView. (One of the arguments in its initializer is the configuration.)
-         */
-
         
         // Get the JavaScript script out of the resources bundle
         let mainBundle = NSBundle.mainBundle()
@@ -73,20 +68,31 @@ class WebVC: UIViewController, WKScriptMessageHandler {
         
         }
     
-    // Print any messages received from JavaScript
+    // Respond to messages received from JavaScript.
     func userContentController(userContentController: WKUserContentController, didReceiveScriptMessage message: WKScriptMessage) {
-        
-        print("JavaScript sends a message.\nMessage name: \(message.name) \nMessage body: \(message.body)\n\n")
         
         // If the message contains our dummy string, then add a new search to the list.
         if message.body is String {
             let body = message.body as! String
 
             if body.rangeOfString("ads8923jadsnj7y82bhjsdfnjky78") != nil {
-                // Add a search--need to send this over to ViewController
-                // TEST FOR NOW
+                // Add a search--need to send this over to ViewController.
+                
+                // TODO: delete this print statement when no longer needed--just a test
                 print("GOT THE URL BACK: \(body)")
+                
+                // create a searchType:
+                // - using dummy title for now
+                // - get a message back with the page title and use that
+                // - final stage: page title suggested as default; user can modify/replace if they wish
+                let urlParts = body.componentsSeparatedByString("ads8923jadsnj7y82bhjsdfnjky78")
+                let newSearch = SearchType(name: "REPLACE-THIS", URLPartOne: urlParts[0], URLPartTwo: urlParts[1])
+                // Send this search type over to the View Controller
+                delegate?.addNewSearchType(newSearch)
+                
             }
+
+            print("JavaScript sends a message.\nMessage name: \(message.name) \nMessage body: \(message.body)\n\n")
             
         }
         
