@@ -30,29 +30,20 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate, WebVCDel
     override func viewWillAppear(animated: Bool) {
         
         super.viewDidAppear(animated)
-        
-        // Get the search types from NSUserDefaults
-        defaults = NSUserDefaults.standardUserDefaults()
-        searchTypesArray = defaults!.objectForKey("searchTypesArray") as? [SearchType] ?? [SearchType]()
-        buttonDictionary = defaults!.objectForKey("buttonDictionary") as? [UIButton: SearchType] ?? [UIButton: SearchType]()
-        
+
         // If not the first time view appears, don't set up buttons (otherwise you get duplicates)
-        // TODO: but what if you need to add new buttons? When you come back from adding a button, the view is appearing again, and it does need to update
+        // TODO: but what if you need to add new buttons? When you come back from adding a button, the view is appearing again, and it does need to update. (Could have it get rid of all the buttons and add them from scratch every time the view appears.)
         if !firstAppearanceOfView {
             return
         }
         
-        // Testing that the program populates the buttons from the array
-        
-        // Create a few sample search types
-        let dictionary = SearchType(name: "Dictionary.com", URLPartOne: "http://www.dictionary.com/browse/", URLPartTwo: "?s=ts")
-        let etymonline = SearchType(name: "Etymonline", URLPartOne: "http://www.etymonline.com/index.php?allowed_in_frame=0&search=", URLPartTwo: "&searchmode=none")
-        let amazon = SearchType(name: "Amazon", URLPartOne: "http://smile.amazon.com/s/ref=smi_www_rcol_go_smi?ie=UTF8&field-keywords=", URLPartTwo: "&url=search-alias%3Daps&x=0&y=0")
-        
-        // Add them to searchTypes Array
-        searchTypesArray += [dictionary, etymonline, amazon]
-        
-        // -------------------------------
+        // Get the search types array from NSUserDefaults and unarchive it
+        defaults = NSUserDefaults.standardUserDefaults()
+        if let searchTypesArrayObject = defaults?.objectForKey("searchTypesArray") as? NSData {
+          
+            searchTypesArray = NSKeyedUnarchiver.unarchiveObjectWithData(searchTypesArrayObject) as! [SearchType]
+            
+        }
         
         // Under the search bar, add a button for each search type.
         // (Later, will replace these with a pretty grid (stackview) of icons)
@@ -61,10 +52,26 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate, WebVCDel
             addButtonForSearchType(type)
         }
         
+        firstAppearanceOfView = false
+        
+        // ----------------------------------           (TESTING)
+        // Some test searches that the program populates the buttons from the array
+        
+        // Create a few sample search types
+        let dictionary = SearchType(name: "Dictionary.com", URLPartOne: "http://www.dictionary.com/browse/", URLPartTwo: "?s=ts")
+        let etymonline = SearchType(name: "Etymonline", URLPartOne: "http://www.etymonline.com/index.php?allowed_in_frame=0&search=", URLPartTwo: "&searchmode=none")
+        let amazon = SearchType(name: "Amazon", URLPartOne: "http://smile.amazon.com/s/ref=smi_www_rcol_go_smi?ie=UTF8&field-keywords=", URLPartTwo: "&url=search-alias%3Daps&x=0&y=0")
+      
+        // Add them to an array
+        let searchTypesArrayTest = [dictionary, etymonline, amazon]
+        
+        // Create buttons for them
+        for type in searchTypesArrayTest {
+            addButtonForSearchType(type)
+        }
         view.layoutIfNeeded()
         
-        
-        firstAppearanceOfView = false
+        // -------------------------------
         
     }
     
@@ -86,20 +93,14 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate, WebVCDel
         // Top anchor: the first button must be constrained to the bottom of the search field. Each subsequent button is constrained to the bottom of the button immediately preceding it.
         let heightOfEachButton = 30
         let spaceBetweenButtons = 20
-        let topAnchorConstant = CGFloat(spaceBetweenButtons) + ((CGFloat(heightOfEachButton) + CGFloat(spaceBetweenButtons)) * CGFloat(searchTypesArray.indexOf(type)!))
+        let topAnchorConstant = CGFloat(spaceBetweenButtons) + ((CGFloat(heightOfEachButton) + CGFloat(spaceBetweenButtons)) * CGFloat(searchTypesArray.indexOf(type)!)) // error here because the test data aren't in searchTypesArray, but searchTypesTest array.
         button.topAnchor.constraintEqualToAnchor(searchField.bottomAnchor, constant: topAnchorConstant).active = true
         
         button.translatesAutoresizingMaskIntoConstraints = false
         view.layoutIfNeeded()
         
-        // Add button to the button:searchType dictionary. Update defaults.
+        // Add button to the button:searchType dictionary.
         buttonDictionary[button] = type
-        defaults!.setObject(buttonDictionary, forKey: "buttonDictionary")
-        
-        // TODO: implement NSCoding in custom classes. Fix the NSUserDefaults reading/writing.
-        // - Should not persist buttons or the buttons dictionary. Should persist only the search types themselves, and programmatically generate the buttons and the button:searchType dictionary on app launch (and when a search type is added: add the button, and append to the dictionary.)
-        // - When SAVING TO DEFAULTS, first use NSKeyedArchiver.archivedDataWithRootObject() to convert the custom object/array to an NSData object. Create a single method that does this (see func save() in the tutorial.)
-        // - When loading the data when the app starts, add the code that unarchives the objects.
         
     }
     
@@ -113,7 +114,7 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate, WebVCDel
         
     }
     
-    // Function to open a web apge in a Safari view controller
+    // Function to open a web page in a Safari view controller
     func openWebPage(URLString: String) {
         
         let thing = NSURL(string: URLString)
@@ -128,12 +129,13 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate, WebVCDel
         
         // Add the new search type to the array
         searchTypesArray.append(searchType)
-        // Update defaults
-        defaults!.setObject(searchTypesArray, forKey: "searchTypesArray")
-        // Calling addButtonForSearchType on it so a button appears
-        addButtonForSearchType(searchType)
         
+        // Update NSUserDefaults: archive updated searchTypesArray to an NSData object and save
+        let savedArray = NSKeyedArchiver.archivedDataWithRootObject(searchTypesArray)
+        defaults!.setObject(savedArray, forKey: "searchTypesArray")
 
+        // Call addButtonForSearchType on it so a button appears
+        addButtonForSearchType(searchType)
         
     }
     
