@@ -17,18 +17,27 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate, WebVCDel
     @IBOutlet weak var addSearchButton: UIButton!
     @IBOutlet weak var searchField: UITextField!
     
-    var firstAppearanceOfView: Bool = true
+    var defaults: NSUserDefaults?
     
-    // Populate the following two properties from NSUserDefaults
+    // The following two properties will be populated from NSUserDefaults in viewDidAppear
+    // Array of search types
     var searchTypesArray: [SearchType] = []
     // A dictionary linking each button to the search it represents
     var buttonDictionary: [UIButton: SearchType] = [:]
+
+    var firstAppearanceOfView: Bool = true
     
     override func viewWillAppear(animated: Bool) {
         
         super.viewDidAppear(animated)
         
+        // Get the search types from NSUserDefaults
+        defaults = NSUserDefaults.standardUserDefaults()
+        searchTypesArray = defaults!.objectForKey("searchTypesArray") as? [SearchType] ?? [SearchType]()
+        buttonDictionary = defaults!.objectForKey("buttonDictionary") as? [UIButton: SearchType] ?? [UIButton: SearchType]()
+        
         // If not the first time view appears, don't set up buttons (otherwise you get duplicates)
+        // TODO: but what if you need to add new buttons? When you come back from adding a button, the view is appearing again, and it does need to update
         if !firstAppearanceOfView {
             return
         }
@@ -47,6 +56,7 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate, WebVCDel
         
         // Under the search bar, add a button for each search type.
         // (Later, will replace these with a pretty grid (stackview) of icons)
+        // TODO: a better interim solution is a tableview. See the tutorial Jim sent? https://realm.io/news/tryswift-chris-eidhof-table-view-controllers-swift/
         for type in searchTypesArray {
             addButtonForSearchType(type)
         }
@@ -82,9 +92,14 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate, WebVCDel
         button.translatesAutoresizingMaskIntoConstraints = false
         view.layoutIfNeeded()
         
-        // Add button to the button:searchType dictionary
-        // TODO: make sure this updates NSUserDefaults
+        // Add button to the button:searchType dictionary. Update defaults.
         buttonDictionary[button] = type
+        defaults!.setObject(buttonDictionary, forKey: "buttonDictionary")
+        
+        // TODO: implement NSCoding in custom classes. Fix the NSUserDefaults reading/writing.
+        // - Should not persist buttons or the buttons dictionary. Should persist only the search types themselves, and programmatically generate the buttons and the button:searchType dictionary on app launch (and when a search type is added: add the button, and append to the dictionary.)
+        // - When SAVING TO DEFAULTS, first use NSKeyedArchiver.archivedDataWithRootObject() to convert the custom object/array to an NSData object. Create a single method that does this (see func save() in the tutorial.)
+        // - When loading the data when the app starts, add the code that unarchives the objects.
         
     }
     
@@ -113,10 +128,12 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate, WebVCDel
         
         // Add the new search type to the array
         searchTypesArray.append(searchType)
+        // Update defaults
+        defaults!.setObject(searchTypesArray, forKey: "searchTypesArray")
         // Calling addButtonForSearchType on it so a button appears
         addButtonForSearchType(searchType)
         
-        // TODO: also add it to (or update?) the NSUserDefaults thing
+
         
     }
     
@@ -153,14 +170,11 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate, WebVCDel
  - Then click/tap.
  
  FEATURES TO DO
- - FIX THE SPACE THING: see http://www.w3schools.com/tags/ref_urlencode.asp (right now, app crashes if search term contains space.) Do this in JS script or in Swift in WebVC? See this: http://stackoverflow.com/questions/24551816/swift-encode-url/24552028#24552028
  - Like Chrome, show a URL on the clipboard, if any
  - Allow searching multiple sites at once in tabs. E.g., search a bunch of dictionaries for the same word, or a bunch of e-commerce sites for the same product.
  - Could add option to get results from an API rather than web search?
- - Also, include Google, so this app could be someone’s default web browser.
- - Also, are there any sites where the search term is NOT included as a query in the URL? In that case, have to have the app actually type it into the search field and hit enter.
- - Also account for things like searching Google for search term + "site:reddit.com". And doing this with multiple sites (e.g., "site:reddit.com OR site:quora.com")
- 
- webkit tutorial: http://www.appcoda.com/webkit-framework-intro/
+ - Include Google, so this app could be someone’s default web browser.
+ - Are there any sites where the search term is NOT included as a query in the URL? In that case, have to have the app actually type it into the search field and hit enter.
+ - Account for things like searching Google for search term + "site:reddit.com". And doing this with multiple sites (e.g., "site:reddit.com OR site:quora.com")
  
  */
