@@ -11,25 +11,26 @@ import WebKit
 import SafariServices
 
 
-class ViewController: UIViewController, SFSafariViewControllerDelegate, WebVCDelegate {
-    
+class ViewController: UIViewController, SFSafariViewControllerDelegate, WebVCDelegate, UITableViewDelegate, UITableViewDataSource {
+
     // MARK: Properties
     @IBOutlet weak var addSearchButton: UIButton!
     @IBOutlet weak var searchField: UITextField!
+    @IBOutlet weak var searchTypesTableView: UITableView!
     
-    var defaults: NSUserDefaults?
     
-    // The following two properties will be populated from NSUserDefaults in viewDidAppear
-    // Array of search types
+    var defaults: UserDefaults?
+    // Array of search types (populated from UserDefaults in viewDidAppear)
     var searchTypesArray: [SearchType] = []
-    // A dictionary linking each button to the search it represents
-    var buttonDictionary: [UIButton: SearchType] = [:]
-
+    
     var firstAppearanceOfView: Bool = true
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         
         super.viewDidAppear(animated)
+        
+        searchTypesTableView.delegate = self
+        self.searchTypesTableView.dataSource = self
 
         // If not the first time view appears, don't set up buttons (otherwise you get duplicates)
         // TODO: but what if you need to add new buttons? When you come back from adding a button, the view is appearing again, and it does need to update. (Could have it get rid of all the buttons and add them from scratch every time the view appears.)
@@ -38,20 +39,16 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate, WebVCDel
         }
         
         // Get the search types array from NSUserDefaults and unarchive it
-        defaults = NSUserDefaults.standardUserDefaults()
-        if let searchTypesArrayObject = defaults?.objectForKey("searchTypesArray") as? NSData {
+        defaults = UserDefaults.standard
+        if let searchTypesArrayObject = defaults?.object(forKey: "searchTypesArray") as? Data {
           
-            searchTypesArray = NSKeyedUnarchiver.unarchiveObjectWithData(searchTypesArrayObject) as! [SearchType]
+            searchTypesArray = NSKeyedUnarchiver.unarchiveObject(with: searchTypesArrayObject) as! [SearchType]
             
         }
         
-        // Under the search bar, add a button for each search type.
-        // (Later, will replace these with a pretty grid (stackview) of icons)
-        // TODO: a better interim solution is a tableview. See the tutorial Jim sent? https://realm.io/news/tryswift-chris-eidhof-table-view-controllers-swift/
-        for type in searchTypesArray {
-            addButtonForSearchType(type)
-        }
+        // (replace tableview with a pretty grid (stackview) of icons)
         
+        //TODO: do I still need this variable?
         firstAppearanceOfView = false
         
         // ----------------------------------           (TESTING)
@@ -63,84 +60,85 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate, WebVCDel
         let amazon = SearchType(name: "Amazon", URLPartOne: "http://smile.amazon.com/s/ref=smi_www_rcol_go_smi?ie=UTF8&field-keywords=", URLPartTwo: "&url=search-alias%3Daps&x=0&y=0")
       
         // Add them to an array
-        let searchTypesArrayTest = [dictionary, etymonline, amazon]
-        
-        // Create buttons for them
-        for type in searchTypesArrayTest {
-            addButtonForSearchType(type)
-        }
-        view.layoutIfNeeded()
+        searchTypesArray = [dictionary, etymonline, amazon]
         
         // -------------------------------
         
     }
     
-    // For a given search type: create a button, put it in the right place, and add it to the button:searchType dictionary
-    func addButtonForSearchType(type: SearchType) {
-        
-        // Create button and connect it to the right search
-        let button = UIButton()
-        view.addSubview(button)
-        button.addTarget(self, action: #selector(performSearch), forControlEvents: .TouchUpInside)
-        button.setTitle(type.name, forState: .Normal)
-        button.setTitleColor(UIColor.blueColor(), forState: .Normal)
-        
-        // Height, width, left anchor
-        button.heightAnchor.constraintEqualToConstant(30).active = true
-        button.widthAnchor.constraintEqualToConstant(200).active = true
-        button.leftAnchor.constraintEqualToAnchor(view.leftAnchor, constant: 30).active = true
-        
-        // Top anchor: the first button must be constrained to the bottom of the search field. Each subsequent button is constrained to the bottom of the button immediately preceding it.
-        let heightOfEachButton = 30
-        let spaceBetweenButtons = 20
-        let topAnchorConstant = CGFloat(spaceBetweenButtons) + ((CGFloat(heightOfEachButton) + CGFloat(spaceBetweenButtons)) * CGFloat(searchTypesArray.indexOf(type)!)) // error here because the test data aren't in searchTypesArray, but searchTypesTest array.
-        button.topAnchor.constraintEqualToAnchor(searchField.bottomAnchor, constant: topAnchorConstant).active = true
-        
-        button.translatesAutoresizingMaskIntoConstraints = false
-        view.layoutIfNeeded()
-        
-        // Add button to the button:searchType dictionary.
-        buttonDictionary[button] = type
-        
+
+    // Tableview delegate methods       (THEN DELETE BUTTON CODE)
+
+    // One section
+    func numberOfSectionsInTableView(tableview: UITableView) -> Int {
+        return 0
+    }
+    
+    // Number of rows
+    @available(iOS 2.0, *)
+    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return self.searchTypesArray.count
+    }
+    
+    // Populate cells
+    @available(iOS 2.0, *)
+    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        // dequeue cell
+        let cell:UITableViewCell = self.searchTypesTableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath as IndexPath)
+        // change text label
+        cell.textLabel?.text = self.searchTypesArray[indexPath.row].name
+        return cell
+    }
+    
+    // Handle tap
+    func tableView(_ tableView: UITableView,
+                            didSelectRowAt indexPath: IndexPath)
+    {
+        performSearch(indexPath.row)
     }
     
     // Search for the search term using the relevant search engine
-    func performSearch(sender: UIButton) {
-     
-        let searchType = buttonDictionary[sender]
-        let searchTerm = searchField.text?.stringByAddingPercentEncodingWithAllowedCharacters(.URLQueryAllowedCharacterSet())
+    func performSearch(_ searchTypeIndex: Int) {
+        
+        // Get the right search type
+        let searchType: SearchType? = searchTypesArray[searchTypeIndex]
+        // Use the text in the search field, and do percent encoding
+        let searchTerm = searchField.text?.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
+        // Construct the final URL
         let finalURL = searchType!.URLPartOne + searchTerm! + searchType!.URLPartTwo
+        // Open a web view with that URL
         openWebPage(finalURL)
         
     }
     
     // Function to open a web page in a Safari view controller
-    func openWebPage(URLString: String) {
+    func openWebPage(_ URLString: String) {
         
-        let thing = NSURL(string: URLString)
-        let safariVC = SFSafariViewController(URL: thing!)
+        let thing = URL(string: URLString)
+        let safariVC = SFSafariViewController(url: thing!)
         safariVC.delegate = self
-        presentViewController(safariVC, animated: true, completion: nil)
+        present(safariVC, animated: true, completion: nil)
         
     }
     
     // Implementation of delegate method. When WebVC sends over a new search type, add it.
-    func addNewSearchType(searchType: SearchType) {
+    func addNewSearchType(_ searchType: SearchType) {
         
         // Add the new search type to the array
         searchTypesArray.append(searchType)
         
         // Update NSUserDefaults: archive updated searchTypesArray to an NSData object and save
-        let savedArray = NSKeyedArchiver.archivedDataWithRootObject(searchTypesArray)
-        defaults!.setObject(savedArray, forKey: "searchTypesArray")
-
+        let savedArray = NSKeyedArchiver.archivedData(withRootObject: searchTypesArray)
+        defaults!.set(savedArray, forKey: "searchTypesArray")
+        
+        //TODO: replace this
         // Call addButtonForSearchType on it so a button appears
-        addButtonForSearchType(searchType)
+        // addButtonForSearchType(searchType)
         
     }
     
     // MARK: Actions
-    @IBAction func addSearchButtonTapped(sender: UIButton) {
+    @IBAction func addSearchButtonTapped(_ sender: UIButton) {
         
         // Open Google in a webview
         
@@ -152,7 +150,7 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate, WebVCDel
         // Set ourself as the WebVC's delegate
         webVC.delegate = self
         // Present it
-        presentViewController(webVC, animated: true, completion: nil)
+        present(webVC, animated: true, completion: nil)
     
     }
     

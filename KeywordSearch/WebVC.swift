@@ -10,7 +10,7 @@ import UIKit
 import WebKit
 
 protocol WebVCDelegate: class {
-    func addNewSearchType(searchType: SearchType)
+    func addNewSearchType(_ searchType: SearchType)
 }
 
 class WebVC: UIViewController, WKScriptMessageHandler {
@@ -24,8 +24,8 @@ class WebVC: UIViewController, WKScriptMessageHandler {
         super.viewDidLoad()
         
         // Get the JavaScript script out of the resources bundle
-        let mainBundle = NSBundle.mainBundle()
-        let script:String? = mainBundle.pathForResource("DetectSearchFields", ofType: "js")
+        let mainBundle = Bundle.main
+        let script:String? = mainBundle.path(forResource: "DetectSearchFields", ofType: "js")
         
         var scriptText:String = ""
         do {
@@ -36,14 +36,14 @@ class WebVC: UIViewController, WKScriptMessageHandler {
         // Create a userScript and add it to the content controller
         let userScript = WKUserScript(
             source: scriptText, //script!,
-            injectionTime: WKUserScriptInjectionTime.AtDocumentEnd,
+            injectionTime: WKUserScriptInjectionTime.atDocumentEnd,
             forMainFrameOnly: true
         )
 
         // Create a content controller, and add the userScript to it
         let contentController = WKUserContentController()
         contentController.addUserScript(userScript)
-        contentController.addScriptMessageHandler(self, name: "SearchField")
+        contentController.add(self, name: "SearchField")
         // Create a configuration and set its contentController property to the one we just created
         let config = WKWebViewConfiguration()
         config.userContentController = contentController
@@ -55,27 +55,27 @@ class WebVC: UIViewController, WKScriptMessageHandler {
         view.addSubview(newSearchView)
         
         // Constrain the web view to its superview
-        newSearchView.heightAnchor.constraintEqualToAnchor(view.heightAnchor).active = true
-        newSearchView.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
-        newSearchView.topAnchor.constraintEqualToAnchor(view.topAnchor)
-        newSearchView.leftAnchor.constraintEqualToAnchor(view.leftAnchor)
+        newSearchView.heightAnchor.constraint(equalTo: view.heightAnchor).isActive = true
+        newSearchView.widthAnchor.constraint(equalTo: view.widthAnchor).isActive = true
+        newSearchView.topAnchor.constraint(equalTo: view.topAnchor)
+        newSearchView.leftAnchor.constraint(equalTo: view.leftAnchor)
         newSearchView.translatesAutoresizingMaskIntoConstraints = false
         
         // Load page
-        let URL: NSURL = NSURL(string: "\(URLString)")!
-        let request = NSURLRequest(URL: URL)
-        newSearchView.loadRequest(request)
+        let URL: Foundation.URL = Foundation.URL(string: "\(URLString)")!
+        let request = URLRequest(url: URL)
+        newSearchView.load(request)
         
         }
     
     // Respond to messages received from JavaScript.
-    func userContentController(userContentController: WKUserContentController, didReceiveScriptMessage message: WKScriptMessage) {
+    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         
         // If the message contains our dummy string, then add a new search to the list.
         if message.body is String {
             let body = message.body as! String
 
-            if body.rangeOfString("ads8923jadsnj7y82bhjsdfnjky78") != nil {
+            if body.range(of: "ads8923jadsnj7y82bhjsdfnjky78") != nil {
                 // Add a search--need to send this over to ViewController.
                 
                 // TODO: delete this print statement when no longer needed--just a test
@@ -85,7 +85,7 @@ class WebVC: UIViewController, WKScriptMessageHandler {
                 // - using dummy title for now
                 // - get a message back with the page title and use that
                 // - final stage: page title suggested as default; user can modify/replace if they wish
-                let urlParts = body.componentsSeparatedByString("ads8923jadsnj7y82bhjsdfnjky78")
+                let urlParts = body.components(separatedBy: "ads8923jadsnj7y82bhjsdfnjky78")
                 let newSearch = SearchType(name: "REPLACE-THIS", URLPartOne: urlParts[0], URLPartTwo: urlParts[1])
                 // Send this search type over to the View Controller
                 delegate?.addNewSearchType(newSearch)
@@ -93,14 +93,14 @@ class WebVC: UIViewController, WKScriptMessageHandler {
                 // Confirm the user doesn't want to add any more searches, then close the WebVC and return to the home screen.
                 let alert = UIAlertController(title: "New search \"\(newSearch.name)\" added!",
                                               message: "Would you like to return to the home screen, or add another search engine?",
-                                              preferredStyle: UIAlertControllerStyle.Alert)
+                                              preferredStyle: UIAlertControllerStyle.alert)
                 let goHomeAction = UIAlertAction(title: "Home",
-                                                 style: .Default,
-                                                 handler: {(alert: UIAlertAction!) in self.dismissViewControllerAnimated(true, completion: nil)})
+                                                 style: .default,
+                                                 handler: {(alert: UIAlertAction!) in self.dismiss(animated: true, completion: nil)})
                 alert.addAction(goHomeAction)
-                let keepAddingAction = UIAlertAction(title: "Add more", style: .Default, handler: nil)
+                let keepAddingAction = UIAlertAction(title: "Add more", style: .default, handler: nil)
                 alert.addAction(keepAddingAction)
-                presentViewController(alert, animated: true, completion: nil)
+                present(alert, animated: true, completion: nil)
 
 
                 

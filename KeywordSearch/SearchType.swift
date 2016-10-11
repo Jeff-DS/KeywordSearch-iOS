@@ -23,15 +23,15 @@ class SearchType: NSObject, NSCoding {
     
     // NSCoding implementation ------------------------------
     required init(coder aDecoder: NSCoder) {
-        name = aDecoder.decodeObjectForKey("name") as! String
-        URLPartOne = aDecoder.decodeObjectForKey("URLPartOne") as! String
-        URLPartTwo = aDecoder.decodeObjectForKey("URLPartTwo") as! String
+        name = aDecoder.decodeObject(forKey: "name") as! String
+        URLPartOne = aDecoder.decodeObject(forKey: "URLPartOne") as! String
+        URLPartTwo = aDecoder.decodeObject(forKey: "URLPartTwo") as! String
     }
     
-    func encodeWithCoder(aCoder: NSCoder) {
-        aCoder.encodeObject(name, forKey: "name")
-        aCoder.encodeObject(URLPartOne, forKey: "URLPartOne")
-        aCoder.encodeObject(URLPartTwo, forKey: "URLPartTwo")
+    func encode(with aCoder: NSCoder) {
+        aCoder.encode(name, forKey: "name")
+        aCoder.encode(URLPartOne, forKey: "URLPartOne")
+        aCoder.encode(URLPartTwo, forKey: "URLPartTwo")
     }
     // --------------------------------
     
