@@ -18,12 +18,8 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate, WebVCDel
     @IBOutlet weak var searchField: UITextField!
     @IBOutlet weak var searchTypesTableView: UITableView!
     
-    
     var defaults: UserDefaults?
-    // Array of search types (populated from UserDefaults in viewDidAppear)
     var searchTypesArray: [SearchType] = []
-    
-    var firstAppearanceOfView: Bool = true
     
     override func viewWillAppear(_ animated: Bool) {
         
@@ -31,12 +27,6 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate, WebVCDel
         
         searchTypesTableView.delegate = self
         self.searchTypesTableView.dataSource = self
-
-        // If not the first time view appears, don't set up buttons (otherwise you get duplicates)
-        // TODO: but what if you need to add new buttons? When you come back from adding a button, the view is appearing again, and it does need to update. (Could have it get rid of all the buttons and add them from scratch every time the view appears.)
-        if !firstAppearanceOfView {
-            return
-        }
         
         // Get the search types array from NSUserDefaults and unarchive it
         defaults = UserDefaults.standard
@@ -46,13 +36,8 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate, WebVCDel
             
         }
         
-        // (replace tableview with a pretty grid (stackview) of icons)
-        
-        //TODO: do I still need this variable?
-        firstAppearanceOfView = false
-        
         // ----------------------------------           (TESTING)
-        // Some test searches that the program populates the buttons from the array
+        // An initial set of search types for testing
         
         // Create a few sample search types
         let dictionary = SearchType(name: "Dictionary.com", URLPartOne: "http://www.dictionary.com/browse/", URLPartTwo: "?s=ts")
@@ -66,8 +51,7 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate, WebVCDel
         
     }
     
-
-    // Tableview delegate methods       (THEN DELETE BUTTON CODE)
+    // Tableview delegate methods
 
     // One section
     func numberOfSectionsInTableView(tableview: UITableView) -> Int {
@@ -83,9 +67,9 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate, WebVCDel
     // Populate cells
     @available(iOS 2.0, *)
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        // dequeue cell
+        // Dequeue cell
         let cell:UITableViewCell = self.searchTypesTableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath as IndexPath)
-        // change text label
+        // Change text label
         cell.textLabel?.text = self.searchTypesArray[indexPath.row].name
         return cell
     }
@@ -131,9 +115,7 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate, WebVCDel
         let savedArray = NSKeyedArchiver.archivedData(withRootObject: searchTypesArray)
         defaults!.set(savedArray, forKey: "searchTypesArray")
         
-        //TODO: replace this
-        // Call addButtonForSearchType on it so a button appears
-        // addButtonForSearchType(searchType)
+        //TODO: test if this successfully adds the new search to tableview
         
     }
     
@@ -169,7 +151,11 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate, WebVCDel
  - Then use something like this (http://stackoverflow.com/questions/5700471/set-value-of-input-using-javascript-function or http://stackoverflow.com/questions/7609130/set-the-value-of-a-input-field-with-javascript) to automatically set what the text is. JavaScript? jQuery? Some helpful stuff here: http://www.w3schools.com/jquery/jquery_examples.asp
  - Then click/tap.
  
+ BUGS/FIXES
+ - Placeholder text appears when tableview cell selected
+ 
  FEATURES TO DO
+ - Replace tableview with a pretty grid (stackview) of icons
  - Like Chrome, show a URL on the clipboard, if any
  - Allow searching multiple sites at once in tabs. E.g., search a bunch of dictionaries for the same word, or a bunch of e-commerce sites for the same product.
  - Could add option to get results from an API rather than web search?
