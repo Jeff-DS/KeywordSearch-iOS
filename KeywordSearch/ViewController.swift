@@ -157,7 +157,8 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate, WebVCDel
  FEATURES TO DO
  - Replace tableview with a pretty grid (stackview) of icons
  - Like Chrome, show a URL on the clipboard, if any
- - Allow searching multiple sites at once in tabs. E.g., search a bunch of dictionaries for the same word, or a bunch of e-commerce sites for the same product.
+ - Allow searching multiple sites at once in tabs. E.g., search a bunch of dictionaries for the same word, or a bunch of e-commerce sites for the same product. After typing your search term, you tap the 'multiple searches' button, select all the search engines you want to use, then tap the button again to search. (Also need an escape button to cancel.)
+   - Should be able to add a multiple-search set to the tableview. E.g., say I regularly want to search a bunch of dictionaries for the same word. I should be able to set this up once and use it later.
  - Could add option to get results from an API rather than web search?
  - Include Google, so this app could be someone’s default web browser.
  - Are there any sites where the search term is NOT included as a query in the URL? In that case, have to have the app actually type it into the search field and hit enter.
