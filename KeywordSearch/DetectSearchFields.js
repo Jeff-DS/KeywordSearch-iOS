@@ -27,7 +27,7 @@ function findSearchFields() {
         // Detect when field is clicked.
         field.onclick = function() {
             
-            field.style.backgroundColor = "yellow";
+            field.style.backgroundColor = "yellow"; //TODO: this only somtimes works (fails on Merriam-Webster. Why does making it blue work, but making it yellow not work? I think the 'you clicked' message still shows up, so onclick is working.)
             sendMessage("You clicked on a search field");
             
             // Put in some random text as the query string

@@ -45,7 +45,7 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate, WebVCDel
         let amazon = SearchType(name: "Amazon", URLPartOne: "http://smile.amazon.com/s/ref=smi_www_rcol_go_smi?ie=UTF8&field-keywords=", URLPartTwo: "&url=search-alias%3Daps&x=0&y=0")
       
         // Add them to an array
-        searchTypesArray = [dictionary, etymonline, amazon]
+//        searchTypesArray = [dictionary, etymonline, amazon]
         
         // -------------------------------
         
@@ -111,24 +111,21 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate, WebVCDel
         // Add the new search type to the array
         searchTypesArray.append(searchType)
         
-        // Update NSUserDefaults: archive updated searchTypesArray to an NSData object and save
+        // Update UserDefaults: archive updated searchTypesArray to a Data object and save
         let savedArray = NSKeyedArchiver.archivedData(withRootObject: searchTypesArray)
         defaults!.set(savedArray, forKey: "searchTypesArray")
         
         //TODO: test if this successfully adds the new search to tableview
+        searchTypesTableView.reloadData()
         
     }
     
     // MARK: Actions
     @IBAction func addSearchButtonTapped(_ sender: UIButton) {
         
-        // Open Google in a webview
-        
-//        openWebPage("https://www.google.com/")
-        
         // Create a view controller
         let webVC: WebVC = WebVC()
-        webVC.URLString = "http://www.etymonline.com/index.php?allowed_in_frame=0&search=gold&searchmode=none"  //"https://www.google.com/"
+        webVC.URLString = "https://www.google.com/" // "http://www.etymonline.com/index.php?allowed_in_frame=0&search=gold&searchmode=none"
         // Set ourself as the WebVC's delegate
         webVC.delegate = self
         // Present it
