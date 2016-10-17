@@ -81,25 +81,44 @@ class WebVC: UIViewController, WKScriptMessageHandler {
                 // TODO: delete this print statement when no longer needed--just a test
                 print("GOT THE URL BACK: \(body)")
                 
-                // create a searchType:
-                // - using dummy title for now
-                // - get a message back with the page title and use that
-                // - final stage: page title suggested as default; user can modify/replace if they wish
+                // Create a new searchType (initialize it with a placeholder name for now)
                 let urlParts = body.components(separatedBy: "ads8923jadsnj7y82bhjsdfnjky78")
                 let newSearch = SearchType(name: "REPLACE-THIS", URLPartOne: urlParts[0], URLPartTwo: urlParts[1])
-                // Send this search type over to the View Controller
-                delegate?.addNewSearchType(newSearch)
                 
-                // Confirm the user doesn't want to add any more searches, then close the WebVC and return to the home screen.
-                let alert = UIAlertController(title: "New search \"\(newSearch.name)\" added!",
-                                              message: "Would you like to return to the home screen, or add another search engine?",
+                // Present a UIAlert that lets the user name the new search type and then either close the WebVC to return to the home screen, or stay in the WebVC to continue adding searches.
+                let alert = UIAlertController(title: "New search added!",
+                                              message: "Give your new search a name, and then return to the home screen or continue adding searches.",
                                               preferredStyle: UIAlertControllerStyle.alert)
+                
+                // Create textfield for the name of the search type
+                alert.addTextField(configurationHandler: { (nameField: UITextField) in
+                })
+                
+                // Action for dismissing the webview
                 let goHomeAction = UIAlertAction(title: "Home",
                                                  style: .default,
-                                                 handler: {(alert: UIAlertAction!) in self.dismiss(animated: true, completion: nil)})
+                                                 handler: {(action: UIAlertAction!) in
+                                                    // Set search's name to the textfield value
+                                                    newSearch.name = (alert.textFields![0] as UITextField!).text!
+                                                    // Send this search type over to the home View Controller
+                                                    self.delegate?.addNewSearchType(newSearch)
+                                                    // Close the WebVC
+                                                    self.dismiss(animated: true, completion: nil)
+                })
                 alert.addAction(goHomeAction)
-                let keepAddingAction = UIAlertAction(title: "Add more", style: .default, handler: nil)
+                
+                // Action for staying in the webview
+                let keepAddingAction = UIAlertAction(title: "Add more",
+                                                     style: .default,
+                                                     handler: {(action: UIAlertAction!) in
+                                                        // Set name
+                                                        newSearch.name = (alert.textFields![0] as UITextField!).text!
+                                                        // Send search type to home VC
+                                                        self.delegate?.addNewSearchType(newSearch)
+                    })
                 alert.addAction(keepAddingAction)
+                
+                // Present alert
                 present(alert, animated: true, completion: nil)
 
 

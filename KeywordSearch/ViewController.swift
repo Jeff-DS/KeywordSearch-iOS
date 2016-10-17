@@ -136,6 +136,8 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate, WebVCDel
 }
 
 /*
+ Trello: https://trello.com/b/DU2zwrow/keywordsearch
+ 
  What this app is
  
  Keyword search: app to do Chrome’s keyword search.
@@ -147,18 +149,5 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate, WebVCDel
  - In the HTML, find the text input boxes by looking for <input type="text" ...> tags. I want to animate text boxes to blink in colors so they're noticeable; see bottom of this page for an example script.
  - Then use something like this (http://stackoverflow.com/questions/5700471/set-value-of-input-using-javascript-function or http://stackoverflow.com/questions/7609130/set-the-value-of-a-input-field-with-javascript) to automatically set what the text is. JavaScript? jQuery? Some helpful stuff here: http://www.w3schools.com/jquery/jquery_examples.asp
  - Then click/tap.
- 
- BUGS/FIXES
- - Placeholder text appears when tableview cell selected
- 
- FEATURES TO DO
- - Replace tableview with a pretty grid (stackview) of icons
- - Like Chrome, show a URL on the clipboard, if any
- - Allow searching multiple sites at once in tabs. E.g., search a bunch of dictionaries for the same word, or a bunch of e-commerce sites for the same product. After typing your search term, you tap the 'multiple searches' button, select all the search engines you want to use, then tap the button again to search. (Also need an escape button to cancel.)
-   - Should be able to add a multiple-search set to the tableview. E.g., say I regularly want to search a bunch of dictionaries for the same word. I should be able to set this up once and use it later.
- - Could add option to get results from an API rather than web search?
- - Include Google, so this app could be someone’s default web browser.
- - Are there any sites where the search term is NOT included as a query in the URL? In that case, have to have the app actually type it into the search field and hit enter.
- - Account for things like searching Google for search term + "site:reddit.com". And doing this with multiple sites (e.g., "site:reddit.com OR site:quora.com")
  
  */
