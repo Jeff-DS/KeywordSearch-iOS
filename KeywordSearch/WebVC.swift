@@ -118,9 +118,16 @@ class WebVC: UIViewController, WKScriptMessageHandler {
                     })
                 alert.addAction(keepAddingAction)
                 
+                //Action for cancelling
+                let cancelAction = UIAlertAction(title: "Cancel",
+                                                 style: .cancel,
+                                                 handler: nil)
+                alert.addAction(cancelAction)
+                
                 // Present alert
                 present(alert, animated: true, completion: nil)
 
+                
 
                 
             }
