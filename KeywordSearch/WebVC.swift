@@ -83,15 +83,18 @@ class WebVC: UIViewController, WKScriptMessageHandler {
                 
                 // Create a new searchType (initialize it with a placeholder name for now)
                 let urlParts = body.components(separatedBy: "ads8923jadsnj7y82bhjsdfnjky78")
-                let newSearch = SearchType(name: "REPLACE-THIS", URLPartOne: urlParts[0], URLPartTwo: urlParts[1])
+                let newSearch = SearchType(name: "", URLPartOne: urlParts[0], URLPartTwo: urlParts[1])
                 
                 // Present a UIAlert that lets the user name the new search type and then either close the WebVC to return to the home screen, or stay in the WebVC to continue adding searches.
-                let alert = UIAlertController(title: "New search added!",
+                let alert = UIAlertController(title: "Add new search",
                                               message: "Give your new search a name, and then return to the home screen or continue adding searches.",
                                               preferredStyle: UIAlertControllerStyle.alert)
                 
                 // Create textfield for the name of the search type
                 alert.addTextField(configurationHandler: { (nameField: UITextField) in
+                    // Use page title as default
+                    nameField.text = self.webView.title
+                    nameField.clearButtonMode = .always
                 })
                 
                 // Action for dismissing the webview
