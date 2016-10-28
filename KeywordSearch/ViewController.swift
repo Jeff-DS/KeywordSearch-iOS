@@ -11,12 +11,12 @@ import WebKit
 import SafariServices
 
 
-class ViewController: UIViewController, SFSafariViewControllerDelegate, WebVCDelegate, UITableViewDelegate, UITableViewDataSource {
+class ViewController: UIViewController, SFSafariViewControllerDelegate, WebVCDelegate,UICollectionViewDelegate, UICollectionViewDataSource {
 
     // MARK: Properties
     @IBOutlet weak var addSearchButton: UIButton!
     @IBOutlet weak var searchField: UITextField!
-    @IBOutlet weak var searchTypesTableView: UITableView!
+    @IBOutlet weak var searchTypesCollectionView: UICollectionView!
     
     var defaults: UserDefaults?
     var searchTypesArray: [SearchType] = []
@@ -25,8 +25,8 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate, WebVCDel
         
         super.viewDidAppear(animated)
         
-        searchTypesTableView.delegate = self
-        self.searchTypesTableView.dataSource = self
+        searchTypesCollectionView.delegate = self
+        searchTypesCollectionView.dataSource = self
         
         // Get the search types array from NSUserDefaults and unarchive it
         defaults = UserDefaults.standard
@@ -51,33 +51,33 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate, WebVCDel
         
     }
     
-    // Tableview delegate methods
-
-    // One section
-    func numberOfSectionsInTableView(tableview: UITableView) -> Int {
-        return 0
+    override func viewDidAppear(_ animated: Bool) {
+        
+        // Make keyboard open
+        //TODO: doesn't work
+        searchField.becomeFirstResponder()
+        
     }
     
-    // Number of rows
-    @available(iOS 2.0, *)
-    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.searchTypesArray.count
+    //MARK: Collection view delegate methods
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return searchTypesArray.count
     }
     
     // Populate cells
-    @available(iOS 2.0, *)
-    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        
         // Dequeue cell
-        let cell:UITableViewCell = self.searchTypesTableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath as IndexPath)
-        // Change text label
-        cell.textLabel?.text = self.searchTypesArray[indexPath.row].name
+        let cell = searchTypesCollectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! SearchTypeCollectionViewCell
+        // Set text label
+        cell.titleLabel.text = searchTypesArray[indexPath.row].name
+        
         return cell
     }
     
     // Handle tap
-    func tableView(_ tableView: UITableView,
-                            didSelectRowAt indexPath: IndexPath)
-    {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         performSearch(indexPath.row)
     }
     
@@ -94,6 +94,8 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate, WebVCDel
         openWebPage(finalURL)
         
     }
+    
+    // MARK: other methods
     
     // Function to open a web page in a Safari view controller
     func openWebPage(_ URLString: String) {
@@ -115,8 +117,8 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate, WebVCDel
         let savedArray = NSKeyedArchiver.archivedData(withRootObject: searchTypesArray)
         defaults!.set(savedArray, forKey: "searchTypesArray")
         
-        //TODO: test if this successfully adds the new search to tableview
-        searchTypesTableView.reloadData()
+        // Reload the tableview with the new search
+        searchTypesCollectionView.reloadData()
         
     }
     
