@@ -21,44 +21,57 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate, WebVCDel
     var defaults: UserDefaults?
     var searchTypesArray: [SearchType] = []
     
-    override func viewWillAppear(_ animated: Bool) {
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
         
-        super.viewDidAppear(animated)
-        
+        // Set self as delegate for the collection view
         searchTypesCollectionView.delegate = self
         searchTypesCollectionView.dataSource = self
         
         // Get the search types array from NSUserDefaults and unarchive it
         defaults = UserDefaults.standard
         if let searchTypesArrayObject = defaults?.object(forKey: "searchTypesArray") as? Data {
-          
+            
             searchTypesArray = NSKeyedUnarchiver.unarchiveObject(with: searchTypesArrayObject) as! [SearchType]
             
         }
         
-        // ----------------------------------           (TESTING)
-        // An initial set of search types for testing
-        
-        // Create a few sample search types
-        let dictionary = SearchType(name: "Dictionary.com", URLPartOne: "http://www.dictionary.com/browse/", URLPartTwo: "?s=ts")
-        let etymonline = SearchType(name: "Etymonline", URLPartOne: "http://www.etymonline.com/index.php?allowed_in_frame=0&search=", URLPartTwo: "&searchmode=none")
-        let amazon = SearchType(name: "Amazon", URLPartOne: "http://smile.amazon.com/s/ref=smi_www_rcol_go_smi?ie=UTF8&field-keywords=", URLPartTwo: "&url=search-alias%3Daps&x=0&y=0")
-      
-        // Add them to an array
-//        searchTypesArray = [dictionary, etymonline, amazon]
-        
-        // -------------------------------
+        // For testing: populate the search types array with a specific set of search types
+        // useTestData()
         
     }
     
     override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
         
-        // Make keyboard open
-        //TODO: doesn't work
+        // Register for notification when keyboard shows
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(keyboardFrameChanged(notification:)),
+                                               name: NSNotification.Name.UIKeyboardWillChangeFrame,
+                                               object: nil)
+        
+        // Make keyboard open immediately
         searchField.becomeFirstResponder()
         
     }
     
+    func keyboardFrameChanged(notification:Notification) -> Void {
+        
+        // Get the keyboard frame
+        guard let keyboardFrame = (notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { print("keyboard error"); return }
+        
+        //TODO: should this be animated? Or should the search field be invisible until after the keyboard fully shows? Ideally, the app would open and the keyboard and field would already be in the correct places. That depends on being able to have the keyboard open without animating.
+        
+        // Constrain the search field to be 10 points above the keyboard
+        let searchFieldHeight = keyboardFrame.size.height + 10
+        self.searchField.bottomAnchor.constraint(equalTo: view.bottomAnchor,
+                                                 constant: searchFieldHeight * -1).isActive = true
+        DispatchQueue.main.async {
+            self.view.layoutIfNeeded()
+        }
+    }
+
     //MARK: Collection view delegate methods
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -119,6 +132,19 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate, WebVCDel
         
         // Reload the tableview with the new search
         searchTypesCollectionView.reloadData()
+        
+    }
+    
+    // Create an initial set of search types for testing
+    func useTestData() -> Void {
+        
+        // Create a few sample search types
+        let dictionary = SearchType(name: "Dictionary.com", URLPartOne: "http://www.dictionary.com/browse/", URLPartTwo: "?s=ts")
+        let etymonline = SearchType(name: "Etymonline", URLPartOne: "http://www.etymonline.com/index.php?allowed_in_frame=0&search=", URLPartTwo: "&searchmode=none")
+        let amazon = SearchType(name: "Amazon", URLPartOne: "http://smile.amazon.com/s/ref=smi_www_rcol_go_smi?ie=UTF8&field-keywords=", URLPartTwo: "&url=search-alias%3Daps&x=0&y=0")
+        
+        // Add them to the array
+        searchTypesArray = [dictionary, etymonline, amazon]
         
     }
     
