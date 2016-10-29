@@ -55,22 +55,6 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate, WebVCDel
         searchField.becomeFirstResponder()
         
     }
-    
-    func keyboardFrameChanged(notification:Notification) -> Void {
-        
-        // Get the keyboard frame
-        guard let keyboardFrame = (notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { print("keyboard error"); return }
-        
-        //TODO: should this be animated? Or should the search field be invisible until after the keyboard fully shows? Ideally, the app would open and the keyboard and field would already be in the correct places. That depends on being able to have the keyboard open without animating.
-        
-        // Constrain the search field to be 10 points above the keyboard
-        let searchFieldHeight = keyboardFrame.size.height + 10
-        self.searchField.bottomAnchor.constraint(equalTo: view.bottomAnchor,
-                                                 constant: searchFieldHeight * -1).isActive = true
-        DispatchQueue.main.async {
-            self.view.layoutIfNeeded()
-        }
-    }
 
     //MARK: Collection view delegate methods
     
@@ -145,6 +129,48 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate, WebVCDel
         
         // Add them to the array
         searchTypesArray = [dictionary, etymonline, amazon]
+        
+    }
+    
+    func keyboardFrameChanged(notification:Notification) -> Void {
+        
+        // Get the keyboard's new frame
+        guard let keyboardFrame = (notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { print("keyboard error"); return }
+        
+        //TODO: should this be animated? Or should the search field be invisible until after the keyboard fully shows? Ideally, the app would open and the keyboard and field would already be in the correct places. That depends on being able to have the keyboard open without animating.
+        
+        // Constrain the search field to be 10 points above the keyboard
+        createOrUpdateConstraint(for: keyboardFrame)
+        
+    }
+    
+    func createOrUpdateConstraint(for keyboardFrame: CGRect) -> Void {
+        
+        let searchFieldHeight = keyboardFrame.size.height + 10
+        
+        // If the constraint already exists, just update its constant.
+        var constraintAlreadyExists = false
+        for constraint in view.constraints where constraint.identifier == "constraint" {
+            
+            constraint.constant = searchFieldHeight
+            constraintAlreadyExists = true
+            
+        }
+        
+        // Otherwise, create the constraint
+        if !constraintAlreadyExists {
+            
+            let constraint: NSLayoutConstraint = self.searchField.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: searchFieldHeight * -1)
+            constraint.identifier = "constraint"
+            constraint.isActive = true
+            
+        }
+        
+        
+        // Update layout
+        DispatchQueue.main.async {
+            self.view.layoutIfNeeded()
+        }
         
     }
     
