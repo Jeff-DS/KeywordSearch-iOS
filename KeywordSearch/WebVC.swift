@@ -33,23 +33,23 @@ class WebVC: UIViewController, WKScriptMessageHandler {
         } catch {
             print("error caught or something")
         }
-        // Create a userScript and add it to the content controller
-        let userScript = WKUserScript(
-            source: scriptText, //script!,
-            injectionTime: WKUserScriptInjectionTime.atDocumentEnd,
-            forMainFrameOnly: true
-        )
+        // Create a userScript
+        let userScript = WKUserScript(source: scriptText,
+                                      injectionTime: WKUserScriptInjectionTime.atDocumentEnd,
+                                      forMainFrameOnly: true)
 
         // Create a content controller, and add the userScript to it
         let contentController = WKUserContentController()
         contentController.addUserScript(userScript)
         contentController.add(self, name: "SearchField")
+        
         // Create a configuration and set its contentController property to the one we just created
         let config = WKWebViewConfiguration()
         config.userContentController = contentController
         
         // Initialize the WKWebView with this configuration
-        let newSearchView: WKWebView = WKWebView(frame: CGRect(), configuration: config)
+        let newSearchView: WKWebView = WKWebView(frame: CGRect(),
+                                                 configuration: config)
         webView = newSearchView
         // Add it as a subview
         view.addSubview(newSearchView)
@@ -60,6 +60,9 @@ class WebVC: UIViewController, WKScriptMessageHandler {
         newSearchView.topAnchor.constraint(equalTo: view.topAnchor)
         newSearchView.leftAnchor.constraint(equalTo: view.leftAnchor)
         newSearchView.translatesAutoresizingMaskIntoConstraints = false
+        
+        // Enable swipe to navigate
+        webView.allowsBackForwardNavigationGestures = true
         
         // Load page
         let URL: Foundation.URL = Foundation.URL(string: "\(URLString)")!

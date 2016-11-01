@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		1F0DE4FD1DC2F6E700DE23EB /* SearchTypeCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F0DE4FC1DC2F6E700DE23EB /* SearchTypeCollectionViewCell.swift */; };
 		1F13989B1CEE2D0D0053408A /* DetectSearchFields.js in Resources */ = {isa = PBXBuildFile; fileRef = 1F13989A1CEE2D0D0053408A /* DetectSearchFields.js */; };
+		1F4D1DED1DC813D70063A4E6 /* Favicon.js in Resources */ = {isa = PBXBuildFile; fileRef = 1F4D1DEC1DC813D60063A4E6 /* Favicon.js */; };
 		1FAFF5461CDBA41800E84778 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FAFF5451CDBA41800E84778 /* AppDelegate.swift */; };
 		1FAFF5481CDBA41800E84778 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FAFF5471CDBA41800E84778 /* ViewController.swift */; };
 		1FAFF54B1CDBA41800E84778 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1FAFF5491CDBA41800E84778 /* Main.storyboard */; };
@@ -40,6 +41,7 @@
 /* Begin PBXFileReference section */
 		1F0DE4FC1DC2F6E700DE23EB /* SearchTypeCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchTypeCollectionViewCell.swift; sourceTree = "<group>"; };
 		1F13989A1CEE2D0D0053408A /* DetectSearchFields.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = DetectSearchFields.js; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.javascript; };
+		1F4D1DEC1DC813D60063A4E6 /* Favicon.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = Favicon.js; sourceTree = "<group>"; };
 		1FAFF5421CDBA41800E84778 /* KeywordSearch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KeywordSearch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1FAFF5451CDBA41800E84778 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1FAFF5471CDBA41800E84778 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -82,6 +84,42 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1F4D1DEE1DC813ED0063A4E6 /* User Scripts */ = {
+			isa = PBXGroup;
+			children = (
+				1F4D1DEC1DC813D60063A4E6 /* Favicon.js */,
+				1F13989A1CEE2D0D0053408A /* DetectSearchFields.js */,
+			);
+			name = "User Scripts";
+			sourceTree = "<group>";
+		};
+		1F4D1DEF1DC8140A0063A4E6 /* Storyboards and Views */ = {
+			isa = PBXGroup;
+			children = (
+				1FAFF5491CDBA41800E84778 /* Main.storyboard */,
+				1F0DE4FC1DC2F6E700DE23EB /* SearchTypeCollectionViewCell.swift */,
+				1FAFF54E1CDBA41800E84778 /* LaunchScreen.storyboard */,
+			);
+			name = "Storyboards and Views";
+			sourceTree = "<group>";
+		};
+		1F4D1DF01DC81D210063A4E6 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				1FAFF5751CDED72C00E84778 /* SearchType.swift */,
+			);
+			name = Models;
+			sourceTree = "<group>";
+		};
+		1F4D1DF11DC81D2A0063A4E6 /* View Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				1FAFF5471CDBA41800E84778 /* ViewController.swift */,
+				1FAFF5731CDD310000E84778 /* WebVC.swift */,
+			);
+			name = "View Controllers";
+			sourceTree = "<group>";
+		};
 		1FAFF5391CDBA41700E84778 = {
 			isa = PBXGroup;
 			children = (
@@ -106,14 +144,11 @@
 			isa = PBXGroup;
 			children = (
 				1FAFF5451CDBA41800E84778 /* AppDelegate.swift */,
-				1FAFF5471CDBA41800E84778 /* ViewController.swift */,
-				1FAFF5731CDD310000E84778 /* WebVC.swift */,
-				1FAFF5751CDED72C00E84778 /* SearchType.swift */,
-				1FAFF5491CDBA41800E84778 /* Main.storyboard */,
-				1F0DE4FC1DC2F6E700DE23EB /* SearchTypeCollectionViewCell.swift */,
-				1F13989A1CEE2D0D0053408A /* DetectSearchFields.js */,
+				1F4D1DF11DC81D2A0063A4E6 /* View Controllers */,
+				1F4D1DF01DC81D210063A4E6 /* Models */,
+				1F4D1DEE1DC813ED0063A4E6 /* User Scripts */,
+				1F4D1DEF1DC8140A0063A4E6 /* Storyboards and Views */,
 				1FAFF54C1CDBA41800E84778 /* Assets.xcassets */,
-				1FAFF54E1CDBA41800E84778 /* LaunchScreen.storyboard */,
 				1FAFF5511CDBA41800E84778 /* Info.plist */,
 			);
 			path = KeywordSearch;
@@ -248,6 +283,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1FAFF5501CDBA41800E84778 /* LaunchScreen.storyboard in Resources */,
+				1F4D1DED1DC813D70063A4E6 /* Favicon.js in Resources */,
 				1FAFF54D1CDBA41800E84778 /* Assets.xcassets in Resources */,
 				1FAFF54B1CDBA41800E84778 /* Main.storyboard in Resources */,
 				1F13989B1CEE2D0D0053408A /* DetectSearchFields.js in Resources */,
