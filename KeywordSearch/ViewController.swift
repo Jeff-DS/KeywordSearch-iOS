@@ -120,7 +120,7 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate, WebVCDel
     }
     
     // Create an initial set of search types for testing
-    func useTestData() -> Void {
+    func useTestData() {
         
         // Create a few sample search types
         let dictionary = SearchType(name: "Dictionary.com", URLPartOne: "http://www.dictionary.com/browse/", URLPartTwo: "?s=ts")
@@ -144,7 +144,7 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate, WebVCDel
         
     }
     
-    func createOrUpdateConstraint(for keyboardFrame: CGRect) -> Void {
+    func createOrUpdateConstraint(for keyboardFrame: CGRect)  {
         
         let searchFieldHeight = keyboardFrame.size.height + 10
         

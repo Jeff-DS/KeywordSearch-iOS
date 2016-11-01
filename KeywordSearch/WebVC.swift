@@ -22,44 +22,21 @@ class WebVC: UIViewController, WKScriptMessageHandler {
     override func viewDidLoad() {
         
         super.viewDidLoad()
-        
-        // Get the JavaScript script out of the resources bundle
-        let mainBundle = Bundle.main
-        let script:String? = mainBundle.path(forResource: "DetectSearchFields", ofType: "js")
-        
-        var scriptText:String = ""
-        do {
-            scriptText = try String(contentsOfFile: script!)
-        } catch {
-            print("error caught or something")
-        }
-        // Create a userScript
-        let userScript = WKUserScript(source: scriptText,
-                                      injectionTime: WKUserScriptInjectionTime.atDocumentEnd,
-                                      forMainFrameOnly: true)
 
-        // Create a content controller, and add the userScript to it
-        let contentController = WKUserContentController()
-        contentController.addUserScript(userScript)
-        contentController.add(self, name: "SearchField")
+        // Add the user scripts that detect search fields and find the favicon
+        self.webView.configuration.userContentController.addUserScript(UserScript(named: "DetectSearchFields"))
+        self.webView.configuration.userContentController.addUserScript(UserScript(named: "Favicon"))
+        // TODO: the app runs, but doesn't get messages back from the web view. Figure out what's going on.
         
-        // Create a configuration and set its contentController property to the one we just created
-        let config = WKWebViewConfiguration()
-        config.userContentController = contentController
-        
-        // Initialize the WKWebView with this configuration
-        let newSearchView: WKWebView = WKWebView(frame: CGRect(),
-                                                 configuration: config)
-        webView = newSearchView
         // Add it as a subview
-        view.addSubview(newSearchView)
+        view.addSubview(webView)
         
         // Constrain the web view to its superview
-        newSearchView.heightAnchor.constraint(equalTo: view.heightAnchor).isActive = true
-        newSearchView.widthAnchor.constraint(equalTo: view.widthAnchor).isActive = true
-        newSearchView.topAnchor.constraint(equalTo: view.topAnchor)
-        newSearchView.leftAnchor.constraint(equalTo: view.leftAnchor)
-        newSearchView.translatesAutoresizingMaskIntoConstraints = false
+        webView.heightAnchor.constraint(equalTo: view.heightAnchor).isActive = true
+        webView.widthAnchor.constraint(equalTo: view.widthAnchor).isActive = true
+        webView.topAnchor.constraint(equalTo: view.topAnchor)
+        webView.leftAnchor.constraint(equalTo: view.leftAnchor)
+        webView.translatesAutoresizingMaskIntoConstraints = false
         
         // Enable swipe to navigate
         webView.allowsBackForwardNavigationGestures = true
@@ -67,7 +44,7 @@ class WebVC: UIViewController, WKScriptMessageHandler {
         // Load page
         let URL: Foundation.URL = Foundation.URL(string: "\(URLString)")!
         let request = URLRequest(url: URL)
-        newSearchView.load(request)
+        webView.load(request)
         
         }
     
@@ -142,6 +119,25 @@ class WebVC: UIViewController, WKScriptMessageHandler {
             
         }
         
+        
+    }
+    
+    func UserScript(named: String) -> WKUserScript {
+        
+        let mainBundle = Bundle.main
+        let file:String? = mainBundle.path(forResource: named, ofType: "js")
+        var scriptText:String = ""
+        
+        do {
+            scriptText = try String(contentsOfFile: file!)
+        } catch {
+            print("error caught or something")
+        }
+        let script = WKUserScript(source: scriptText,
+                                  injectionTime: WKUserScriptInjectionTime.atDocumentEnd,
+                                  forMainFrameOnly: true)
+        
+        return script
         
     }
     

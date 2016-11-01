@@ -1,4 +1,11 @@
 
+// Tell the app the URL of the current page
+sendMessage(document.URL);
+// Find all search fields on the page, and if user clicks on one, tell the app the destination URL
+findSearchFields();
+
+// Function definitions
+
 function findSearchFields() {
 
     // Get an array of all the search boxes on the page
@@ -27,7 +34,7 @@ function findSearchFields() {
         // Detect when field is clicked.
         field.onclick = function() {
             
-            field.style.backgroundColor = "yellow"; //TODO: this only somtimes works (fails on Merriam-Webster. Why does making it blue work, but making it yellow not work? I think the 'you clicked' message still shows up, so onclick is working.)
+            field.style.backgroundColor = "yellow"; //TODO: this only sometimes works (fails on Merriam-Webster. Why does making it blue work, but making it yellow not work? I think the 'you clicked' message still shows up, so onclick is working.)
             sendMessage("You clicked on a search field");
             
             // Put in some random text as the query string
@@ -38,8 +45,6 @@ function findSearchFields() {
             
             // Send the destination URL back with messageHandler.
             sendMessage(document.URL);
-            
-            
         
         }
 
@@ -51,9 +56,6 @@ function findSearchFields() {
 function sendMessage(message) {
     webkit.messageHandlers.SearchField.postMessage(message);
 }
-
-sendMessage(document.URL);
-findSearchFields();
 
 /*
  Example for JavaScript animation, I modified it from here: http://www.w3schools.com/jquery/tryit.asp?filename=tryjquery_animation1_multicss

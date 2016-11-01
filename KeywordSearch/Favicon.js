@@ -7,60 +7,46 @@
  */
 
 
-if (!window.__firefox__) {
-    window.__firefox__ = {};
+/*
+ Notes to self since I don't know JavaScript/CSS/web dev:
+ 
+ This...        document.head.querySelectorAll("link[rel~='icon']")         ...means:
+ 
+ 'in the webpage source (HTML? CSS?), find all the "link" tags where the value of the "rel" attribute contains the word "icon" (i.e., the entire word either alone or separated from other words by spaces--does NOT just check if the string contains "icon" at some point).
+ 
+ E.g., it would find this:          <link rel="this says icon somewhere lol">
+ 
+ */
+
+// Create an array of favicon URLs and send it back to the app
+
+// Create empty array for the URLs
+var favicons = []
+
+// CSS attribute selectors that might find the favicon (https://css-tricks.com/attribute-selectors/)
+var possibleSelectors = ["link[rel~='icon']", // matches "icon" or "shortcut icon"
+                         "link[rel~='apple-touch-icon']", // e.g., SO has "apple-touch-icon image_src"
+                         "link[rel='apple-touch-icon-precomposed']"]
+
+// For each selector, search for it, get its href value (the URL), and add that to the favicons array
+for (var selector in possibleSelectors) {
+    var string = possibleSelectors[selector]
+    var elements = document.head.querySelectorAll(string)
+    for (var element in elements) {
+        var url = elements[element].href
+        if (url) {
+            favicons.push(url)
+        }
+    }
 }
 
-// sets favicons property of whatever as this function. will have to change this
-window.__firefox__.favicons = function() {
-    // These integers should be kept in sync with the IconType raw-values
-    var ICON = 0;
-    var APPLE = 1;
-    var APPLE_PRECOMPOSED = 2;
-    var GUESS = 3;
-    
-    // Dictionary of strings to integers??
-    var selectors = { "link[rel~='icon']": ICON,
-        "link[rel='apple-touch-icon']": APPLE,
-        "link[rel='apple-touch-icon-precomposed']": APPLE_PRECOMPOSED
-    };
-    
-    // Function that outputs a dictionary of
-    function getAll() {
-        
-        // create empty dictionary
-        var favicons = {};
-        
-        // for item in dict of strings to integers
-        for (var selector in selectors) {
-            // get all the elements matching the string
-            var icons = document.head.querySelectorAll(selector);
-            // for each of them, create an entry in favicons dictionary of its URL:number
-            for (var i = 0; i < icons.length; i++) {
-                var href = icons[i].href;
-                favicons[href] = selectors[selector];
-            }
-        }
-        
-        // If we didn't find anything in the page, look to see if a favicon.ico file exists for the domain
-        if (Object.keys(favicons).length === 0) {
-            var href = document.location.origin + "/favicon.ico";
-            favicons[href] = GUESS;
-        }
-        
-        // return the favicons dictionary
-        return favicons;
-    }
-    
-    // send favicons dictionary back to the app
-    function getFavicons() {
-        var favicons = getAll();
-        webkit.messageHandlers.faviconsMessageHandler.postMessage(favicons);
-    }
-    
-    // why the colon?
-    return {
-        getFavicons : getFavicons
-    };
-    
-}();
+// If page doesn't have favicon, look to see if a favicon.ico file exists for the domain
+if (favicons.length === 0) {
+    var lastHope = document.location.origin + "/favicon.ico";
+    favicons.push(lastHope)
+}
+
+// Send the favicons URLs back to the app
+webkit.messageHandlers.faviconsMessageHandler.postMessage(favicons); //TODO: define this message handler
+
+//TODO: copy the other message handler, make the relevant changes, and have it print the message so we can see what's actually in the array. Or try it in Chrome console.
