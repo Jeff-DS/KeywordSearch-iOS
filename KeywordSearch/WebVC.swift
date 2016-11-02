@@ -23,20 +23,18 @@ class WebVC: UIViewController, WKScriptMessageHandler {
         
         super.viewDidLoad()
 
-        // Add the user scripts that detect search fields and find the favicon
+        // Create WKWebView the size of the main view
+        webView = WKWebView(frame: view.frame)
+        
+        // Set self to receive messages
+        self.webView.configuration.userContentController.add(self, name: "SearchField")
+        
+        // Add the user scripts that detect search fields and find a page's favicon
         self.webView.configuration.userContentController.addUserScript(UserScript(named: "DetectSearchFields"))
         self.webView.configuration.userContentController.addUserScript(UserScript(named: "Favicon"))
-        // TODO: the app runs, but doesn't get messages back from the web view. Figure out what's going on.
         
-        // Add it as a subview
+        // Add web view as a subview
         view.addSubview(webView)
-        
-        // Constrain the web view to its superview
-        webView.heightAnchor.constraint(equalTo: view.heightAnchor).isActive = true
-        webView.widthAnchor.constraint(equalTo: view.widthAnchor).isActive = true
-        webView.topAnchor.constraint(equalTo: view.topAnchor)
-        webView.leftAnchor.constraint(equalTo: view.leftAnchor)
-        webView.translatesAutoresizingMaskIntoConstraints = false
         
         // Enable swipe to navigate
         webView.allowsBackForwardNavigationGestures = true
