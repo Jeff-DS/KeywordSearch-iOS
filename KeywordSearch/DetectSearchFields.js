@@ -1,10 +1,26 @@
+var dummySearch = "ads8923jadsnj7y82bhjsdfnjky78"
 
-// Tell the app the URL of the current page
-sendMessage(document.URL);
+// If the current page has the dummy search term in it, tell the app to add a new search type
+if (document.URL.includes(dummySearch)) {
+    
+    var dict = {
+        "messageType": "new search",
+        "message": document.URL
+    }
+    
+    sendMessage(dict)
+    
+}
+
 // Find all search fields on the page, and if user clicks on one, tell the app the destination URL
 findSearchFields();
 
-// Function definitions
+// --------- Function definitions ---------
+
+// Post a message back to the app
+function sendMessage(message) {
+    webkit.messageHandlers.WebVCMessageHandler.postMessage(message);
+}
 
 function findSearchFields() {
 
@@ -17,10 +33,8 @@ function findSearchFields() {
             searchFields.push(inputs[i]);
         }
     }
-    
-    // Let the app know how many we found
-    sendMessage("There is/are " + searchFields.length + " search field(s) on this page");
 
+    // Turn them blue to bring them to the user's attention. And set up the onclick function.
     for (var i = 0; i < searchFields.length; i++) {
         
         var field = searchFields[i];
@@ -35,16 +49,15 @@ function findSearchFields() {
         field.onclick = function() {
             
             field.style.backgroundColor = "yellow"; //TODO: this only sometimes works (fails on Merriam-Webster. Why does making it blue work, but making it yellow not work? I think the 'you clicked' message still shows up, so onclick is working.)
-            sendMessage("You clicked on a search field");
+            //sendMessage("You clicked on a search field");
             
             // Put in some random text as the query string
-            field.value = "ads8923jadsnj7y82bhjsdfnjky78";
+            field.value = dummySearch;
             
-            // Submit form                  <-- QUESTION: will the <form> always be the grandparent node of the search box? If not, how to reliably submit the form?
+            // Submit form
             field.parentNode.parentNode.submit();
-            
-            // Send the destination URL back with messageHandler.
-            sendMessage(document.URL);
+            // QUESTION: will the <form> always be the grandparent node of the search box? If not, how to reliably submit the form?
+            //TODO: this only sometimes works. Working examples: Bing, DuckDuckGo. Doesn't work: Stack Overflow, Wikipedia, Twitter. Check the source on those sites and see what's up.
         
         }
 
@@ -52,10 +65,6 @@ function findSearchFields() {
     
 }
 
-// Post a message back to the app
-function sendMessage(message) {
-    webkit.messageHandlers.SearchField.postMessage(message);
-}
 
 /*
  Example for JavaScript animation, I modified it from here: http://www.w3schools.com/jquery/tryit.asp?filename=tryjquery_animation1_multicss

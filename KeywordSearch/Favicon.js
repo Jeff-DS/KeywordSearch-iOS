@@ -46,7 +46,12 @@ if (favicons.length === 0) {
     favicons.push(lastHope)
 }
 
+var dict = {
+    "messageType": "favicon",
+    "message": favicons
+}
+
 // Send the favicons URLs back to the app
-webkit.messageHandlers.faviconsMessageHandler.postMessage(favicons); //TODO: define this message handler
+webkit.messageHandlers.WebVCMessageHandler.postMessage(dict);
 
 //TODO: copy the other message handler, make the relevant changes, and have it print the message so we can see what's actually in the array. Or try it in Chrome console.
