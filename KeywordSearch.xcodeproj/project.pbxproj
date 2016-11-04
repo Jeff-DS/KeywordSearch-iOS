@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		1F0DE4FD1DC2F6E700DE23EB /* SearchTypeCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F0DE4FC1DC2F6E700DE23EB /* SearchTypeCollectionViewCell.swift */; };
 		1F13989B1CEE2D0D0053408A /* DetectSearchFields.js in Resources */ = {isa = PBXBuildFile; fileRef = 1F13989A1CEE2D0D0053408A /* DetectSearchFields.js */; };
-		1F4D1DED1DC813D70063A4E6 /* Favicon.js in Resources */ = {isa = PBXBuildFile; fileRef = 1F4D1DEC1DC813D60063A4E6 /* Favicon.js */; };
+		1F14CB531DCBE8CE0072A8A9 /* ImageClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F14CB521DCBE8CE0072A8A9 /* ImageClient.swift */; };
 		1FAFF5461CDBA41800E84778 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FAFF5451CDBA41800E84778 /* AppDelegate.swift */; };
 		1FAFF5481CDBA41800E84778 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FAFF5471CDBA41800E84778 /* ViewController.swift */; };
 		1FAFF54B1CDBA41800E84778 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1FAFF5491CDBA41800E84778 /* Main.storyboard */; };
@@ -41,7 +41,7 @@
 /* Begin PBXFileReference section */
 		1F0DE4FC1DC2F6E700DE23EB /* SearchTypeCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchTypeCollectionViewCell.swift; sourceTree = "<group>"; };
 		1F13989A1CEE2D0D0053408A /* DetectSearchFields.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = DetectSearchFields.js; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.javascript; };
-		1F4D1DEC1DC813D60063A4E6 /* Favicon.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = Favicon.js; sourceTree = "<group>"; };
+		1F14CB521DCBE8CE0072A8A9 /* ImageClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageClient.swift; sourceTree = "<group>"; };
 		1FAFF5421CDBA41800E84778 /* KeywordSearch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KeywordSearch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1FAFF5451CDBA41800E84778 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1FAFF5471CDBA41800E84778 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -87,7 +87,6 @@
 		1F4D1DEE1DC813ED0063A4E6 /* User Scripts */ = {
 			isa = PBXGroup;
 			children = (
-				1F4D1DEC1DC813D60063A4E6 /* Favicon.js */,
 				1F13989A1CEE2D0D0053408A /* DetectSearchFields.js */,
 			);
 			name = "User Scripts";
@@ -106,6 +105,7 @@
 		1F4D1DF01DC81D210063A4E6 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				1F14CB521DCBE8CE0072A8A9 /* ImageClient.swift */,
 				1FAFF5751CDED72C00E84778 /* SearchType.swift */,
 			);
 			name = Models;
@@ -283,7 +283,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				1FAFF5501CDBA41800E84778 /* LaunchScreen.storyboard in Resources */,
-				1F4D1DED1DC813D70063A4E6 /* Favicon.js in Resources */,
 				1FAFF54D1CDBA41800E84778 /* Assets.xcassets in Resources */,
 				1FAFF54B1CDBA41800E84778 /* Main.storyboard in Resources */,
 				1F13989B1CEE2D0D0053408A /* DetectSearchFields.js in Resources */,
@@ -311,6 +310,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1F14CB531DCBE8CE0072A8A9 /* ImageClient.swift in Sources */,
 				1FAFF5741CDD310000E84778 /* WebVC.swift in Sources */,
 				1FAFF5481CDBA41800E84778 /* ViewController.swift in Sources */,
 				1F0DE4FD1DC2F6E700DE23EB /* SearchTypeCollectionViewCell.swift in Sources */,

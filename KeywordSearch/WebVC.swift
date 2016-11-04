@@ -11,6 +11,7 @@ import WebKit
 
 protocol WebVCDelegate: class {
     func addNewSearchType(_ searchType: SearchType)
+    func set(favicon: UIImage, for searchTypeWithUrl: String)
 }
 
 class WebVC: UIViewController, WKScriptMessageHandler {
@@ -29,9 +30,8 @@ class WebVC: UIViewController, WKScriptMessageHandler {
         // Set self to receive messages
         self.webView.configuration.userContentController.add(self, name: "WebVCMessageHandler")
         
-        // Add the user scripts that detect search fields and find a page's favicon
+        // Add user script (to detect search fields, find favicons, send data to app, etc.)
         self.webView.configuration.userContentController.addUserScript(UserScript(named: "DetectSearchFields"))
-        self.webView.configuration.userContentController.addUserScript(UserScript(named: "Favicon"))
         
         // Add web view as a subview
         view.addSubview(webView)
@@ -52,49 +52,64 @@ class WebVC: UIViewController, WKScriptMessageHandler {
         //TODO: delete after testing
         print("JavaScript sends a message.\nMessage name: \(message.name) \nMessage body: \(message.body)\n\n")
         
-        // Cast the incoming JSON to NSDictionary and thence to Dictionary. 
-        guard let bodyNSDict = message.body as? NSDictionary
-            else { print("Error: message body could not be converted to NSDictionary"); return }
-        guard let body = bodyNSDict as? [String:AnyObject]
-            else { print("Error: the NSDictionary could not be converted to Dictionary"); return }
-        guard let messageType = body["messageType"] as? String
+        // Turn the incoming JSON to into a Dictionary [String:Any].
+        let messageDict = dictionaryFrom(JSONObject: message.body)
+        guard let messageType = messageDict["messageType"] as? String
             else { print("messageType not a string"); return }
         
-        switch messageType {
-        case "favicon":
-            //TODO: download the favicon from the URL and do appropriate stuff with it
-            print("hi")
+        if messageType == "new search" {
             
-        case "new search":
-            let alertController = newSearchAlertController(for: body["message"])
+            // Here, download all the pictures and use the biggest one. Or maybe do it as a dictionary and if there's an iPhone one available, use that one.
+            
+            //TODO: download the favicon from the URL and do appropriate stuff with it
+            
+            let alertController = newSearchAlertController(for: messageDict)
             DispatchQueue.main.async {
                 alertController.view.layoutIfNeeded() // otherwise this happens: http://stackoverflow.com/questions/30685379/swift-getting-snapshotting-a-view-that-has-not-been-rendered-error-when-try/33943731
                 self.present(alertController, animated: true, completion: nil)
             }
             
-        default:
-            print("hi")
-            //TODO: default?
         }
         
     }
     
     // Create a UIAlert for a new search type that lets the user either cancel or name and add the new search type, and then either close the WebVC to return to the home screen, or stay in the WebVC to continue adding searches.
-    func newSearchAlertController(for message: Any) -> UIAlertController {
+    func newSearchAlertController(for message: [String:Any]) -> UIAlertController {
         
-        guard let messageString = message as? String
-            else {print("message isn't string"); return UIAlertController() }
+        /* TODO:
+         One weird thing: currently getting the page title through the self.webView property. If I could do that, then I could get the URL (and maybe even the HTML to find the favicons?) through that property too, and wouldn't have to pass stuff back by posting a message. If I can't/shouldn't be doing that, then I should have the user script pass back the page title too. Do so after removing the dummy string: one, because then only the JS (not the app) needs to know about the dummy string at all. Two, because it's probably easier to remove a substring in JS than Swift.
+        */
         
-        print("GOT THE URL BACK: \(messageString)")
+        // URL stuff
+        guard let urlString = message["URL"] as? String
+            else {print("Error: the URL is not a string"); return UIAlertController() }
+        let urlParts = urlString.components(separatedBy: "ads8923jadsnj7y82bhjsdfnjky78")
         
-        if messageString.range(of: "ads8923jadsnj7y82bhjsdfnjky78") == nil {
-            print("The search term is not in the URL. Cannot create a search type.")
-            return UIAlertController()
+        // Favicons stuff
+        guard let faviconsArray = message["favicons"] as? [String] //TODO: make sure this works; might have to convert through NSArray first
+            else { print("Favicons couldn't be converted to array"); return UIAlertController() }
+        ImageClient().getLargestFavicon(from: faviconsArray) { (favicon) in
+            // make new search favicon equal favicon
+            set(favicon: favicon, for: message["url"])
+            /*TODO:
+             - add a protocol method at the top of this file called add(favicon: UIImage to searchType: searchType). PROBLEM - the favicon might come in a) before the user has approved the search type and added it to the array, b) after, or c) after they cancel. So have to handle all three possibilities. Also, it doesn't have a name at this point, and the URL hasn't been broken down yet, and the full URL doesn't exist anywhere in the final SearchType object.
+             - Call it in the completion block here and pass it the image.
+             - Then implement it in the ViewController, to get the named search type and set its favicon.
+             - Also, think about duplicates: maybe make it impossible to have two with the same name.
+             - Also, make Podfile > paste old one in and change name > run pod install
+             - push before midnight
+             */
+            
+            let newSearchFavicon = favicon
         }
-        
+        let favicon = UIImage()
+
         // Create a new searchType (initialize it with a placeholder name for now)
-        let urlParts = messageString.components(separatedBy: "ads8923jadsnj7y82bhjsdfnjky78")
-        let newSearch = SearchType(name: "", URLPartOne: urlParts[0], URLPartTwo: urlParts[1])
+        let newSearch = SearchType(name: "",
+                                   URLPartOne: urlParts[0],
+                                   URLPartTwo: urlParts[1],
+                                   favicon: favicon)
+        
         
         // Create the alert
         let alert = UIAlertController(title: "Add new search",
@@ -103,8 +118,12 @@ class WebVC: UIViewController, WKScriptMessageHandler {
         
         // Create textfield for the name of the search type
         alert.addTextField(configurationHandler: { (nameField: UITextField) in
-            // Use page title as default
-            nameField.text = self.webView.title
+            // Use page title, minus dummy string, as default
+            if var title = self.webView.title {
+                title = self.remove(substring: "ads8923jadsnj7y82bhjsdfnjky78", from: title)
+                nameField.text = title
+            }
+            
             nameField.clearButtonMode = .always
         })
         
@@ -164,8 +183,24 @@ class WebVC: UIViewController, WKScriptMessageHandler {
     
     // Turn a JSON object into a Dictionary
     func dictionaryFrom(JSONObject: Any) -> [String: Any] {
-        //TODO: implement
-        return ["fake": "fake"]
+        
+        let failDict = ["fail": "fail"]
+        
+        guard let nsDict = JSONObject as? NSDictionary
+            else { print("Error: cast to NSDictionary failed"); return failDict}
+        guard let dict = nsDict as? [String:AnyObject]
+            else { print("Error: cast to [String:Any] (Dictionary) failed"); return failDict}
+        
+        return dict
+    }
+    
+    func remove(substring: String, from string: String) -> String {
+        var newString = string
+        if let range = string.range(of: substring) {
+            newString.removeSubrange(range)
+            return newString
+        }
+        return string
     }
     
 }

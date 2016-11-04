@@ -3,16 +3,19 @@ var dummySearch = "ads8923jadsnj7y82bhjsdfnjky78"
 // If the current page has the dummy search term in it, tell the app to add a new search type
 if (document.URL.includes(dummySearch)) {
     
+    var favicons = getFavicons()
+    
     var dict = {
         "messageType": "new search",
-        "message": document.URL
+        "URL": document.URL,
+        "favicons": favicons
     }
     
     sendMessage(dict)
     
 }
 
-// Find all search fields on the page, and if user clicks on one, tell the app the destination URL
+// Find all search fields on the page, and if user taps on one, put in the dummy string and submit the form.
 findSearchFields();
 
 // --------- Function definitions ---------
@@ -64,6 +67,56 @@ function findSearchFields() {
     }
     
 }
+
+
+// Favicon code is adapted from: https://github.com/mozilla-mobile/firefox-ios/blob/master/Client/Assets/Favicons.js (license: "This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. ")
+
+// Create an array of favicon URLs
+function getFavicons() {
+    
+    // Create empty array for the URLs
+    var favicons = []
+    
+    // CSS attribute selectors that might find the favicon (https://css-tricks.com/attribute-selectors/)
+    var possibleSelectors = ["link[rel~='icon']", // matches "icon" or "shortcut icon"
+                             "link[rel~='apple-touch-icon']", // e.g., SO has "apple-touch-icon image_src"
+                             "link[rel='apple-touch-icon-precomposed']"]
+    
+    // For each selector, search for it, get its href value (the URL), and add that to the favicons array
+    for (var selector in possibleSelectors) {
+        var string = possibleSelectors[selector]
+        var elements = document.head.querySelectorAll(string)
+        for (var element in elements) {
+            var url = elements[element].href
+            if (url && (favicons.indexOf(url) != -1) ) {
+                favicons.push(url)
+            }
+        }
+    }
+    
+    // If page doesn't have favicon, look to see if a favicon.ico file exists for the domain
+    if (favicons.length === 0) {
+        var lastHope = document.location.origin + "/favicon.ico";
+        favicons.push(lastHope)
+    }
+    
+    return favicons
+    
+}
+
+//TODO: copy the other message handler, make the relevant changes, and have it print the message so we can see what's actually in the array. Or try it in Chrome console.
+
+
+/*
+ Notes to self on the favicon stuff since I don't know JavaScript/CSS/web dev:
+ 
+ This...        document.head.querySelectorAll("link[rel~='icon']")         ...means:
+ 
+ 'in the webpage source (HTML? CSS?), find all the "link" tags where the value of the "rel" attribute contains the word "icon" (i.e., the entire word either alone or separated from other words by spaces--does NOT just check if the string contains "icon" at some point).
+ 
+ E.g., it would find this:          <link rel="this says icon somewhere lol">
+ 
+ */
 
 
 /*

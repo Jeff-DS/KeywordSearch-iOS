@@ -29,7 +29,7 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate, WebVCDel
         searchTypesCollectionView.delegate = self
         searchTypesCollectionView.dataSource = self
         
-        // Get the search types array from NSUserDefaults and unarchive it
+        // Get the search types array from UserDefaults and unarchive it
         defaults = UserDefaults.standard
         if let searchTypesArrayObject = defaults?.object(forKey: "searchTypesArray") as? Data {
             
