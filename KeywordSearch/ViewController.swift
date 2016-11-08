@@ -86,11 +86,11 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate, WebVCDel
                     self.collectionView.reloadItems(at: [indexPath])
                 }
             }
-            // Set cell background to the favicon
-            //TODO: better way to do this than a pattern image?
-            cell.backgroundColor = UIColor.init(patternImage: favicon)
-            
         }
+        
+        // Set cell background to the favicon
+        //TODO: better way to do this than a pattern image?
+        cell.backgroundColor = UIColor.init(patternImage: favicon)
         
         
         return cell
