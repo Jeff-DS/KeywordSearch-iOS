@@ -13,10 +13,10 @@ import AlamofireImage
 class ImageClient: NSObject {
     
     // Take an array of URL strings, download the image (if any) at each URL, and pass the largest of the resulting images back to the caller
-    func getLargestFavicon(from array: [String], completion: @escaping (UIImage) -> Void ) {
+    func getLargestFavicon(from array: [String], completion: @escaping (UIImage?) -> Void ) {
         
         // Get all the images
-        var images = [UIImage]
+        var images = [UIImage]()
         for url in array {
             getImage(at: url, completion: { (image) in
                 images.append(image)
@@ -25,8 +25,8 @@ class ImageClient: NSObject {
                 var biggest:UIImage?
                 if images.count == array.count {
                     for image in images {
-                        if biggest {
-                            if image.size.height > biggest?.size.height {
+                        if biggest != nil {
+                            if image.size.height > biggest!.size.height {
                                 biggest = image
                             }
                         } else {
@@ -48,6 +48,7 @@ class ImageClient: NSObject {
             guard let image = response.result.value as UIImage! else {
                 print("Could not convert response at \(url) into UIImage")
                 completion(UIImage())
+                return
             }
             
             completion(image)

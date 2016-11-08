@@ -57,14 +57,11 @@ class WebVC: UIViewController, WKScriptMessageHandler {
             else { print("messageType not a string"); return }
         
         if messageType == "new search" {
-            
-            // Here, download all the pictures and use the biggest one. Or maybe do it as a dictionary and if there's an iPhone one available, use that one.
-            
-            //TODO: download the favicon from the URL and do appropriate stuff with it
-            
+
             let alertController = newSearchAlertController(for: messageDict)
             DispatchQueue.main.async {
-                alertController.view.layoutIfNeeded() // otherwise this happens: http://stackoverflow.com/questions/30685379/swift-getting-snapshotting-a-view-that-has-not-been-rendered-error-when-try/33943731
+                alertController.view.setNeedsLayout()
+                //alertController.view.layoutIfNeeded() // otherwise this happens: http://stackoverflow.com/questions/30685379/swift-getting-snapshotting-a-view-that-has-not-been-rendered-error-when-try/33943731 ...but if I leave this line in, even in conjunction with setNeedsLayout() then this happens: http://stackoverflow.com/questions/33241052/xcode-iphone-6-plus-and-6s-plus-shows-warning-when-display-uialertviewcontroller
                 self.present(alertController, animated: true, completion: nil)
             }
             
@@ -79,13 +76,12 @@ class WebVC: UIViewController, WKScriptMessageHandler {
          One weird thing: currently getting the page title through the self.webView property. If I could do that, then I could get the URL (and maybe even the HTML to find the favicons?) through that property too, and wouldn't have to pass stuff back by posting a message. If I can't/shouldn't be doing that, then I should have the user script pass back the page title too. Do so after removing the dummy string: one, because then only the JS (not the app) needs to know about the dummy string at all. Two, because it's probably easier to remove a substring in JS than Swift.
         */
         
-        // URL stuff
+        // Get the search page URL
         guard let urlString = message["URL"] as? String
             else {print("Error: the URL is not a string"); return UIAlertController() }
         let urlParts = urlString.components(separatedBy: "ads8923jadsnj7y82bhjsdfnjky78")
         
-        // Favicons stuff
-        
+        // Extract an array of potential favicon URLs from the JSON
         guard let faviconsArray = message["favicons"] as? [String] //TODO: make sure this works; might have to convert through NSArray first
             else { print("Favicons couldn't be converted to array"); return UIAlertController() }
 
@@ -95,6 +91,7 @@ class WebVC: UIViewController, WKScriptMessageHandler {
                                    URLPartTwo: urlParts[1],
                                    faviconUrlList: faviconsArray)
         
+        //TODO: SOMETHING IS HAPPENING WHEN THE ALERT CONTROLLER LAUNCHES THAT BREAKS THE COLLECTIONVIEW: it happens before the user even approves the new search
         
         // Create the alert
         let alert = UIAlertController(title: "Add new search",

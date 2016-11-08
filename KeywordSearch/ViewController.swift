@@ -76,22 +76,24 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate, WebVCDel
         cell.titleLabel.text = searchType.name
         
         // If search type doesn't have a favicon yet, but there's a list of URLs, get the image from each URL (if any), take the largest, and set it to the favicon property
-        if !(searchType.favicon) && searchType.faviconUrlList {
-            self.imageClient.getLargestFavicon(from: faviconUrlList) { (favicon) in
+        
+        if let list = searchType.faviconUrlList, searchType.favicon == nil {
+            self.imageClient.getLargestFavicon(from: list) { (favicon) in
                 // Set search type's favicon property to the returned UIImage
                 searchType.favicon = favicon
                 //TODO: make sure the change to the searchType persists
                 // Reload cell
                 DispatchQueue.main.async {
-                    self.collectionView.reloadItems(at: [indexPath])
+                    self.searchTypesCollectionView.reloadItems(at: [indexPath])
                 }
             }
         }
         
         // Set cell background to the favicon
         //TODO: better way to do this than a pattern image?
-        cell.backgroundColor = UIColor.init(patternImage: favicon)
-        
+        if let favicon = searchType.favicon {
+            cell.backgroundColor = UIColor.init(patternImage: favicon)
+        }
         
         return cell
     }
@@ -146,9 +148,10 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate, WebVCDel
     func useTestData() {
         
         // Create a few sample search types
-        let dictionary = SearchType(name: "Dictionary.com", URLPartOne: "http://www.dictionary.com/browse/", URLPartTwo: "?s=ts")
-        let etymonline = SearchType(name: "Etymonline", URLPartOne: "http://www.etymonline.com/index.php?allowed_in_frame=0&search=", URLPartTwo: "&searchmode=none")
-        let amazon = SearchType(name: "Amazon", URLPartOne: "http://smile.amazon.com/s/ref=smi_www_rcol_go_smi?ie=UTF8&field-keywords=", URLPartTwo: "&url=search-alias%3Daps&x=0&y=0")
+        // TODO: get the favicons for these
+        let dictionary = SearchType(name: "Dictionary.com", URLPartOne: "http://www.dictionary.com/browse/", URLPartTwo: "?s=ts", faviconUrlList: [])
+        let etymonline = SearchType(name: "Etymonline", URLPartOne: "http://www.etymonline.com/index.php?allowed_in_frame=0&search=", URLPartTwo: "&searchmode=none", faviconUrlList: [])
+        let amazon = SearchType(name: "Amazon", URLPartOne: "http://smile.amazon.com/s/ref=smi_www_rcol_go_smi?ie=UTF8&field-keywords=", URLPartTwo: "&url=search-alias%3Daps&x=0&y=0", faviconUrlList: [])
         
         // Add them to the array
         searchTypesArray = [dictionary, etymonline, amazon]

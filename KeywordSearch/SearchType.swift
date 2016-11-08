@@ -28,7 +28,7 @@ class SearchType: NSObject, NSCoding {
         name = aDecoder.decodeObject(forKey: "name") as! String
         URLPartOne = aDecoder.decodeObject(forKey: "URLPartOne") as! String
         URLPartTwo = aDecoder.decodeObject(forKey: "URLPartTwo") as! String
-        favicon = aDecoder.decodeObject(forKey: "favicon") as! UIImage
+        favicon = aDecoder.decodeObject(forKey: "favicon") as? UIImage
     }
     
     func encode(with aCoder: NSCoder) {
