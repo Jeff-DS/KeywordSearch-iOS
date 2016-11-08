@@ -20,6 +20,7 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate, WebVCDel
     
     var defaults: UserDefaults?
     var searchTypesArray: [SearchType] = []
+    let imageClient = ImageClient()
     
     
     override func viewDidLoad() {
@@ -67,8 +68,30 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate, WebVCDel
         
         // Dequeue cell
         let cell = searchTypesCollectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! SearchTypeCollectionViewCell
+        
+        // Get search type
+        let searchType = searchTypesArray[indexPath.row]
+        
         // Set text label
-        cell.titleLabel.text = searchTypesArray[indexPath.row].name
+        cell.titleLabel.text = searchType.name
+        
+        // If search type doesn't have a favicon yet, but there's a list of URLs, get the image from each URL (if any), take the largest, and set it to the favicon property
+        if !(searchType.favicon) && searchType.faviconUrlList {
+            self.imageClient.getLargestFavicon(from: faviconUrlList) { (favicon) in
+                // Set search type's favicon property to the returned UIImage
+                searchType.favicon = favicon
+                //TODO: make sure the change to the searchType persists
+                // Reload cell
+                DispatchQueue.main.async {
+                    self.collectionView.reloadItems(at: [indexPath])
+                }
+            }
+            // Set cell background to the favicon
+            //TODO: better way to do this than a pattern image?
+            cell.backgroundColor = UIColor.init(patternImage: favicon)
+            
+        }
+        
         
         return cell
     }

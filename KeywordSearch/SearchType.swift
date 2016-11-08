@@ -13,13 +13,14 @@ class SearchType: NSObject, NSCoding {
     var name: String
     var URLPartOne: String
     var URLPartTwo: String
-    var favicon: UIImage
+    var favicon: UIImage?
+    var faviconUrlList: [String]?
     
-    init(name: String, URLPartOne: String, URLPartTwo: String, favicon: UIImage) {
+    init(name: String, URLPartOne: String, URLPartTwo: String, faviconUrlList: [String]) {
         self.name = name
         self.URLPartOne = URLPartOne
         self.URLPartTwo = URLPartTwo
-        self.favicon = favicon
+        self.faviconUrlList = faviconUrlList
     }
     
     // NSCoding implementation ------------------------------

@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import Alamofire        //TODO: CREATE PODFILE, ADD THESE TWO PODS AND POD INSTALL
+import Alamofire
 import AlamofireImage
 
 class ImageClient: NSObject {

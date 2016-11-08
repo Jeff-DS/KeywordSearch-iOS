@@ -11,7 +11,6 @@ import WebKit
 
 protocol WebVCDelegate: class {
     func addNewSearchType(_ searchType: SearchType)
-    func set(favicon: UIImage, for searchTypeWithUrl: String)
 }
 
 class WebVC: UIViewController, WKScriptMessageHandler {
@@ -86,29 +85,15 @@ class WebVC: UIViewController, WKScriptMessageHandler {
         let urlParts = urlString.components(separatedBy: "ads8923jadsnj7y82bhjsdfnjky78")
         
         // Favicons stuff
+        
         guard let faviconsArray = message["favicons"] as? [String] //TODO: make sure this works; might have to convert through NSArray first
             else { print("Favicons couldn't be converted to array"); return UIAlertController() }
-        ImageClient().getLargestFavicon(from: faviconsArray) { (favicon) in
-            // make new search favicon equal favicon
-            set(favicon: favicon, for: message["url"])
-            /*TODO:
-             - add a protocol method at the top of this file called add(favicon: UIImage to searchType: searchType). PROBLEM - the favicon might come in a) before the user has approved the search type and added it to the array, b) after, or c) after they cancel. So have to handle all three possibilities. Also, it doesn't have a name at this point, and the URL hasn't been broken down yet, and the full URL doesn't exist anywhere in the final SearchType object.
-             - Call it in the completion block here and pass it the image.
-             - Then implement it in the ViewController, to get the named search type and set its favicon.
-             - Also, think about duplicates: maybe make it impossible to have two with the same name.
-             - Also, make Podfile > paste old one in and change name > run pod install
-             - push before midnight
-             */
-            
-            let newSearchFavicon = favicon
-        }
-        let favicon = UIImage()
 
         // Create a new searchType (initialize it with a placeholder name for now)
         let newSearch = SearchType(name: "",
                                    URLPartOne: urlParts[0],
                                    URLPartTwo: urlParts[1],
-                                   favicon: favicon)
+                                   faviconUrlList: faviconsArray)
         
         
         // Create the alert
