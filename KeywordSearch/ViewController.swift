@@ -163,7 +163,7 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate, WebVCDel
         // Get the keyboard's new frame
         guard let keyboardFrame = (notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { print("keyboard error"); return }
         
-        //TODO: should this be animated? Or should the search field be invisible until after the keyboard fully shows? Ideally, the app would open and the keyboard and field would already be in the correct places. That depends on being able to have the keyboard open without animating.
+        //TODO: should this be animated? Or should the search field be invisible until after the keyboard fully shows? Ideally, the keyboard and field would already be in the correct places. That depends on being able to have the keyboard open without animating.
         
         // Constrain the search field to be 10 points above the keyboard
         createOrUpdateConstraint(for: keyboardFrame)
@@ -172,14 +172,22 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate, WebVCDel
     
     func createOrUpdateConstraint(for keyboardFrame: CGRect)  {
         
+        // height of search field should be:
         let searchFieldHeight = keyboardFrame.size.height + 10
         
         // If the constraint already exists, just update its constant.
         var constraintAlreadyExists = false
-        for constraint in view.constraints where constraint.identifier == "constraint" {
+        for index in 0..<view.constraints.count where view.constraints[index].identifier == "constraint" {
             
-            constraint.constant = searchFieldHeight
             constraintAlreadyExists = true
+            view.constraints[index].constant = searchFieldHeight * -1
+            
+            DispatchQueue.main.async {
+                self.view.updateConstraintsIfNeeded()
+                self.view.layoutIfNeeded()
+                print("Constant changed to: \(self.view.constraints[index].constant)")
+                print("searchField is now at: \(self.searchField.frame)")
+            }
             
         }
         
