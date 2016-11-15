@@ -90,9 +90,9 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate, WebVCDel
         }
         
         // Set cell background to the favicon
-        //TODO: better way to do this than a pattern image?
         if let favicon = searchType.favicon {
-            cell.backgroundColor = UIColor.init(patternImage: favicon)
+            //cell.backgroundColor = UIColor.init(patternImage: favicon)
+            cell.avatarView.image = favicon
         }
         
         return cell

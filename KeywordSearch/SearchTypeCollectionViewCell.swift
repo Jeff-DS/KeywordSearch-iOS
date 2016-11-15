@@ -11,5 +11,5 @@ import UIKit
 class SearchTypeCollectionViewCell: UICollectionViewCell {
     
     @IBOutlet weak var titleLabel: UILabel!
-    
+    @IBOutlet weak var avatarView: UIImageView!
 }

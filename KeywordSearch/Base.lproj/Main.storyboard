@@ -44,6 +44,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="u8O-hi-0cA"/>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NIS-zx-deb">
                                                     <frame key="frameInset" minX="4" minY="15" width="42" height="21"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -53,7 +54,14 @@
                                                 </label>
                                             </subviews>
                                         </view>
+                                        <constraints>
+                                            <constraint firstItem="u8O-hi-0cA" firstAttribute="height" secondItem="FYJ-rV-mA9" secondAttribute="height" id="NB5-gY-d8E"/>
+                                            <constraint firstItem="u8O-hi-0cA" firstAttribute="centerX" secondItem="FYJ-rV-mA9" secondAttribute="centerX" id="O6q-OE-dTQ"/>
+                                            <constraint firstItem="u8O-hi-0cA" firstAttribute="width" secondItem="FYJ-rV-mA9" secondAttribute="width" id="iM0-zv-b02"/>
+                                            <constraint firstItem="u8O-hi-0cA" firstAttribute="centerY" secondItem="FYJ-rV-mA9" secondAttribute="centerY" id="ijS-GA-0na"/>
+                                        </constraints>
                                         <connections>
+                                            <outlet property="avatarView" destination="u8O-hi-0cA" id="Xlz-5X-h2w"/>
                                             <outlet property="titleLabel" destination="NIS-zx-deb" id="YLy-Te-thm"/>
                                         </connections>
                                     </collectionViewCell>
