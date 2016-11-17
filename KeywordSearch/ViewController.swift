@@ -79,9 +79,15 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate, WebVCDel
         
         if let list = searchType.faviconUrlList, searchType.favicon == nil {
             self.imageClient.getLargestFavicon(from: list) { (favicon) in
+                
                 // Set search type's favicon property to the returned UIImage
                 searchType.favicon = favicon
-                //TODO: make sure the change to the searchType persists
+                
+                // Update searchTypesArray property and update UserDefaults to persist the change to the favicon property
+                self.searchTypesArray[indexPath.row] = searchType
+                let updatedArray = NSKeyedArchiver.archivedData(withRootObject: self.searchTypesArray)
+                self.defaults!.set(updatedArray, forKey: "searchTypesArray")
+                
                 // Reload cell
                 DispatchQueue.main.async {
                     self.searchTypesCollectionView.reloadItems(at: [indexPath])
@@ -182,13 +188,6 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate, WebVCDel
             constraintAlreadyExists = true
             view.constraints[index].constant = searchFieldHeight * -1
             
-            DispatchQueue.main.async {
-                self.view.updateConstraintsIfNeeded()
-                self.view.layoutIfNeeded()
-                print("Constant changed to: \(self.view.constraints[index].constant)")
-                print("searchField is now at: \(self.searchField.frame)")
-            }
-            
         }
         
         // Otherwise, create the constraint
@@ -200,9 +199,9 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate, WebVCDel
             
         }
         
-        
         // Update layout
         DispatchQueue.main.async {
+            self.view.updateConstraintsIfNeeded()
             self.view.layoutIfNeeded()
         }
         
