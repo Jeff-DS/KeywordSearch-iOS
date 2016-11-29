@@ -36,6 +36,11 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate, WebVCDel
             
             searchTypesArray = NSKeyedUnarchiver.unarchiveObject(with: searchTypesArrayObject) as! [SearchType]
             
+            // Run this method the first time the app is opened. (The user hasn't added any search types yet, so it adds Google as a default.)
+            if searchTypesArray.isEmpty {
+                firstRun()
+            }
+            
         }
         
         // For testing: populate the search types array with a specific set of search types.
@@ -166,6 +171,26 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate, WebVCDel
         // COMMENT OUT THE FOLLOWING if you don't want to lose all other existing search types.
         let updatedArray = NSKeyedArchiver.archivedData(withRootObject: self.searchTypesArray)
         self.defaults!.set(updatedArray, forKey: "searchTypesArray")
+        
+    }
+    
+    // To run when the search types list is empty
+    func firstRun() -> Void {
+        
+        
+        // Create search type
+        let google = SearchType(name: "Google", URLPartOne: "https://www.google.com/search?q=", URLPartTwo: "", faviconUrlList: ["https://www.google.com/favicon.ico"])
+        
+        // Add to searchTypesArray and archive
+        searchTypesArray.append(google)
+        let updatedArray = NSKeyedArchiver.archivedData(withRootObject: self.searchTypesArray)
+        self.defaults!.set(updatedArray, forKey: "searchTypesArray")
+        
+        // Update collection view
+        DispatchQueue.main.async {
+            self.searchTypesCollectionView.reloadData()
+        }
+        
         
     }
     
