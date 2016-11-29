@@ -38,8 +38,9 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate, WebVCDel
             
         }
         
-        // For testing: populate the search types array with a specific set of search types
-        // useTestData()
+        // For testing: populate the search types array with a specific set of search types.
+        // CAREFUL: this will obliterate all existing search types. Go to this method and comment that part out if this is not desired.
+//         useTestData()
         
     }
     
@@ -162,6 +163,10 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate, WebVCDel
         // Add them to the array
         searchTypesArray = [dictionary, etymonline, amazon]
         
+        // COMMENT OUT THE FOLLOWING if you don't want to lose all other existing search types.
+        let updatedArray = NSKeyedArchiver.archivedData(withRootObject: self.searchTypesArray)
+        self.defaults!.set(updatedArray, forKey: "searchTypesArray")
+        
     }
     
     func keyboardFrameChanged(notification:Notification) -> Void {
@@ -230,11 +235,11 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate, WebVCDel
  Keyword search: app to do Chrome’s keyword search.
  - You’d have a big text field and below it a grid of squares representing websites (looking like a home screen full of apps).
  - You type your search term, tap to select a search (your most frequent is selected by default), and hit go/enter.
- - To add a search type, you go to the “Add search” section of the app, which is a browser. Go to the website, and tap on the right search bar. The app will automatically add this to the search list. Under the hood, it does this by entering a random search term and clicking Enter (or letting you click if Enter doesn’t work), then using the resulting page’s URL to figure out the frame URL and where to put the search term in.
+ - To add a search type, you go to the “Add search” section of the app, which opens a web view. Go to the website, and tap on the search bar. The app will automatically add this to the search list. Under the hood, it does this by entering a random search term and submitting the form, then using the resulting page’s URL to figure out the frame URL and where to put the search term in.
  - IMPLEMENTATION:
  - See the part at this page on putting .js scripts in an app and accessing them by replacing init() on a view controller for a web view... http://www.appcoda.com/webkit-framework-tutorial/
  - In the HTML, find the text input boxes by looking for <input type="text" ...> tags. I want to animate text boxes to blink in colors so they're noticeable; see bottom of this page for an example script.
  - Then use something like this (http://stackoverflow.com/questions/5700471/set-value-of-input-using-javascript-function or http://stackoverflow.com/questions/7609130/set-the-value-of-a-input-field-with-javascript) to automatically set what the text is. JavaScript? jQuery? Some helpful stuff here: http://www.w3schools.com/jquery/jquery_examples.asp
- - Then click/tap.
+ - Then submit the form.
  
  */

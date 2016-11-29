@@ -3,6 +3,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11161"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -20,13 +21,16 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="VQ0-H8-CvQ">
-                                <state key="normal" title="Add Search"/>
+                                <fontDescription key="fontDescription" name="Avenir-Book" family="Avenir" pointSize="17"/>
+                                <state key="normal" title="Add Search">
+                                    <color key="titleColor" red="0.23884099721908569" green="0.96852773427963257" blue="0.04900667816400528" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                </state>
                                 <connections>
                                     <action selector="addSearchButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="OnU-Gp-KOe"/>
                                 </connections>
                             </button>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="rUz-rM-Bqo">
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="242" id="DqJ-Ni-Er2"/>
                                 </constraints>
@@ -44,21 +48,25 @@
                                             <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="u8O-hi-0cA"/>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NIS-zx-deb">
-                                                    <frame key="frameInset" minX="4" minY="15" width="42" height="21"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <nil key="textColor"/>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="u8O-hi-0cA">
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="17.5" id="AQZ-7h-Kbu"/>
+                                                        <constraint firstAttribute="width" secondItem="u8O-hi-0cA" secondAttribute="height" multiplier="1:1" id="ecU-MN-MLp"/>
+                                                    </constraints>
+                                                </imageView>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NIS-zx-deb">
+                                                    <fontDescription key="fontDescription" name="Avenir-Book" family="Avenir" pointSize="12"/>
+                                                    <color key="textColor" red="0.23884099721908569" green="0.96852773427963257" blue="0.04900667816400528" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
                                         </view>
                                         <constraints>
-                                            <constraint firstItem="u8O-hi-0cA" firstAttribute="height" secondItem="FYJ-rV-mA9" secondAttribute="height" id="NB5-gY-d8E"/>
+                                            <constraint firstItem="u8O-hi-0cA" firstAttribute="bottom" secondItem="NIS-zx-deb" secondAttribute="top" constant="-10" id="0Pg-jU-7lO"/>
                                             <constraint firstItem="u8O-hi-0cA" firstAttribute="centerX" secondItem="FYJ-rV-mA9" secondAttribute="centerX" id="O6q-OE-dTQ"/>
-                                            <constraint firstItem="u8O-hi-0cA" firstAttribute="width" secondItem="FYJ-rV-mA9" secondAttribute="width" id="iM0-zv-b02"/>
-                                            <constraint firstItem="u8O-hi-0cA" firstAttribute="centerY" secondItem="FYJ-rV-mA9" secondAttribute="centerY" id="ijS-GA-0na"/>
+                                            <constraint firstItem="NIS-zx-deb" firstAttribute="bottom" secondItem="FYJ-rV-mA9" secondAttribute="bottomMargin" constant="10" id="Ybd-aG-f77"/>
+                                            <constraint firstItem="NIS-zx-deb" firstAttribute="centerX" secondItem="FYJ-rV-mA9" secondAttribute="centerX" id="ge2-u9-xNa"/>
+                                            <constraint firstItem="u8O-hi-0cA" firstAttribute="top" secondItem="FYJ-rV-mA9" secondAttribute="topMargin" id="ljC-RD-HU0"/>
                                         </constraints>
                                         <connections>
                                             <outlet property="avatarView" destination="u8O-hi-0cA" id="Xlz-5X-h2w"/>
@@ -72,7 +80,7 @@
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
                         </subviews>
-                        <color key="backgroundColor" red="1" green="0.79066474837106215" blue="0.9653770890472787" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
                             <constraint firstAttribute="trailingMargin" secondItem="eQ5-lY-mq8" secondAttribute="trailing" constant="20" id="7WN-Y8-gCF" userLabel="text box 20 from right"/>
                             <constraint firstAttribute="trailingMargin" secondItem="rUz-rM-Bqo" secondAttribute="trailing" id="9HH-tH-MYv"/>
