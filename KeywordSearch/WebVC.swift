@@ -82,7 +82,7 @@ class WebVC: UIViewController, WKScriptMessageHandler {
         let urlParts = urlString.components(separatedBy: "ads8923jadsnj7y82bhjsdfnjky78")
         
         // Extract an array of potential favicon URLs from the JSON
-        guard let faviconsArray = message["favicons"] as? [String] //TODO: make sure this works; might have to convert through NSArray first
+        guard let faviconsArray = message["favicons"] as? [String]
             else { print("Favicons couldn't be converted to array"); return UIAlertController() }
 
         // Create a new searchType (initialize it with a placeholder name for now)
@@ -90,8 +90,6 @@ class WebVC: UIViewController, WKScriptMessageHandler {
                                    URLPartOne: urlParts[0],
                                    URLPartTwo: urlParts[1],
                                    faviconUrlList: faviconsArray)
-        
-        //TODO: SOMETHING IS HAPPENING WHEN THE ALERT CONTROLLER LAUNCHES THAT BREAKS THE COLLECTIONVIEW: it happens before the user even approves the new search
         
         // Create the alert
         let alert = UIAlertController(title: "Add new search",

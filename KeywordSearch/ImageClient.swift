@@ -19,7 +19,7 @@ class ImageClient: NSObject {
         var images = [UIImage]()
         for url in array {
             getImage(at: url, completion: { (image) in
-                images.append(image)
+                if let image = image { images.append(image) }
                 
                 // When all the images are in, find the biggest image
                 var biggest:UIImage?
@@ -40,14 +40,14 @@ class ImageClient: NSObject {
         }
     }
     
-    func getImage(at url: String, completion: @escaping (UIImage) -> Void) {
+    func getImage(at url: String, completion: @escaping (UIImage?) -> Void) {
         
         Alamofire.request(url).responseImage { response in
             
             // Convert to UIImage
             guard let image = response.result.value as UIImage! else {
                 print("Could not convert response at \(url) into UIImage")
-                completion(UIImage())
+                completion(nil)
                 return
             }
             

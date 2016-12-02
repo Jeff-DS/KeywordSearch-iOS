@@ -54,8 +54,16 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate, WebVCDel
         
         // Register for notification when keyboard shows
         NotificationCenter.default.addObserver(self,
-                                               selector: #selector(keyboardFrameChanged(notification:)),
+                                               selector: #selector(keyboardFrameChanges(notification:)),
                                                name: NSNotification.Name.UIKeyboardWillChangeFrame,
+                                               object: nil)
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(disableAnimations(notification:)),
+                                               name: NSNotification.Name.UIKeyboardWillShow,
+                                               object: nil)
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(enableAnimations(notification:)),
+                                               name: NSNotification.Name.UIKeyboardDidShow,
                                                object: nil)
         
         // Make keyboard open immediately
@@ -103,7 +111,6 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate, WebVCDel
         
         // Set cell background to the favicon
         if let favicon = searchType.favicon {
-            //cell.backgroundColor = UIColor.init(patternImage: favicon)
             cell.avatarView.image = favicon
         }
         
@@ -177,7 +184,6 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate, WebVCDel
     // To run when the search types list is empty
     func firstRun() -> Void {
         
-        
         // Create search type
         let google = SearchType(name: "Google", URLPartOne: "https://www.google.com/search?q=", URLPartTwo: "", faviconUrlList: ["https://www.google.com/favicon.ico"])
         
@@ -194,7 +200,7 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate, WebVCDel
         
     }
     
-    func keyboardFrameChanged(notification:Notification) -> Void {
+    func keyboardFrameChanges(notification:Notification) -> Void {
         
         // Get the keyboard's new frame
         guard let keyboardFrame = (notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { print("keyboard error"); return }
@@ -204,6 +210,16 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate, WebVCDel
         // Constrain the search field to be 10 points above the keyboard
         createOrUpdateConstraint(for: keyboardFrame)
         
+    }
+    
+    // Disable animations so keyboard appears immediately rather than animating in
+    func disableAnimations(notification:Notification) -> Void {
+        UIView.setAnimationsEnabled(false)
+    }
+    
+    // Reenable animations after keyboard shows
+    func enableAnimations(notification:Notification) -> Void {
+        UIView.setAnimationsEnabled(true)
     }
     
     func createOrUpdateConstraint(for keyboardFrame: CGRect)  {
@@ -264,7 +280,4 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate, WebVCDel
  - IMPLEMENTATION:
  - See the part at this page on putting .js scripts in an app and accessing them by replacing init() on a view controller for a web view... http://www.appcoda.com/webkit-framework-tutorial/
  - In the HTML, find the text input boxes by looking for <input type="text" ...> tags. I want to animate text boxes to blink in colors so they're noticeable; see bottom of this page for an example script.
- - Then use something like this (http://stackoverflow.com/questions/5700471/set-value-of-input-using-javascript-function or http://stackoverflow.com/questions/7609130/set-the-value-of-a-input-field-with-javascript) to automatically set what the text is. JavaScript? jQuery? Some helpful stuff here: http://www.w3schools.com/jquery/jquery_examples.asp
- - Then submit the form.
- 
  */
